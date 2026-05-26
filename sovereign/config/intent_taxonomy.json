@@ -1,0 +1,1424 @@
+{
+  "version": "1.0.0",
+  "description": "Taxonomy of human intents for Sovereign AI perception engine",
+  "intents": [
+    {
+      "id": "math_arithmetic_basic",
+      "name": "Basic Arithmetic",
+      "category": "calculation",
+      "patterns": [
+        "calculate",
+        "sum",
+        "subtract",
+        "multiply",
+        "divide",
+        "plus",
+        "minus",
+        "times",
+        "over",
+        "ได้เท่าไร",
+        "ได้เท่าไหร่",
+        "เท่ากับเท่าไหร่",
+        "เท่ากับเท่าไร",
+        "ผลลัพธ์",
+        "คำนวณ",
+        "เลข",
+        "บวก",
+        "ลบ",
+        "คูณ",
+        "หาร",
+        "ได้กี่",
+        "มีค่าเท่ากับ"
+      ],
+      "examples": [
+        "9.8-9.11",
+        "what is 5+3",
+        "calculate 10*2"
+      ]
+    },
+    {
+      "id": "math_arithmetic_advanced",
+      "name": "Advanced Mathematics",
+      "category": "calculation",
+      "patterns": [
+        "square root",
+        "power",
+        "exponent",
+        "logarithm",
+        "trigonometry",
+        "sin",
+        "cos",
+        "tan"
+      ],
+      "examples": [
+        "sqrt of 16",
+        "2 to the power of 3",
+        "sin(30)"
+      ]
+    },
+    {
+      "id": "math_comparison",
+      "name": "Number Comparison",
+      "category": "calculation",
+      "patterns": [
+        "greater than",
+        "less than",
+        "equal to",
+        "bigger",
+        "smaller",
+        "compare"
+      ],
+      "examples": [
+        "is 9.8 greater than 9.11",
+        "compare 5 and 10"
+      ]
+    },
+    {
+      "id": "money_payment_advice",
+      "name": "Payment Advice",
+      "category": "finance",
+      "patterns": [
+        "pay",
+        "change",
+        "coins",
+        "banknote",
+        "prepare money",
+        "exact change"
+      ],
+      "examples": [
+        "how to pay 19 baht",
+        "what coins for 50 baht",
+        "prepare exact change"
+      ]
+    },
+    {
+      "id": "money_currency_conversion",
+      "name": "Currency Conversion",
+      "category": "finance",
+      "patterns": [
+        "convert currency",
+        "exchange rate",
+        "USD to THB",
+        "EUR to USD"
+      ],
+      "examples": [
+        "convert 100 USD to THB",
+        "what is exchange rate"
+      ]
+    },
+    {
+      "id": "money_budget_planning",
+      "name": "Budget Planning",
+      "category": "finance",
+      "patterns": [
+        "budget",
+        "save money",
+        "spending plan",
+        "financial planning"
+      ],
+      "examples": [
+        "help me budget 1000 baht",
+        "how to save money"
+      ]
+    },
+    {
+      "id": "question_factual",
+      "name": "Factual Question",
+      "category": "inquiry",
+      "patterns": [
+        "what is",
+        "who is",
+        "when is",
+        "where is",
+        "why is",
+        "how does"
+      ],
+      "examples": [
+        "what is AI",
+        "who invented computer",
+        "when is Thai new year"
+      ]
+    },
+    {
+      "id": "question_procedural",
+      "name": "Procedural Question",
+      "category": "inquiry",
+      "patterns": [
+        "how to",
+        "steps to",
+        "guide me",
+        "tutorial",
+        "instructions"
+      ],
+      "examples": [
+        "how to cook rice",
+        "steps to install python",
+        "guide me through setup"
+      ]
+    },
+    {
+      "id": "question_opinion",
+      "name": "Opinion Question",
+      "category": "inquiry",
+      "patterns": [
+        "what do you think",
+        "your opinion",
+        "best way",
+        "recommend"
+      ],
+      "examples": [
+        "what do you think about AI",
+        "best programming language",
+        "recommend a book"
+      ]
+    },
+    {
+      "id": "command_execute_task",
+      "name": "Execute Task",
+      "category": "command",
+      "patterns": [
+        "do this",
+        "execute",
+        "run",
+        "perform",
+        "carry out"
+      ],
+      "examples": [
+        "do this calculation",
+        "execute the plan",
+        "run the test"
+      ]
+    },
+    {
+      "id": "command_create_content",
+      "name": "Create Content",
+      "category": "command",
+      "patterns": [
+        "create",
+        "make",
+        "generate",
+        "write",
+        "design",
+        "build"
+      ],
+      "examples": [
+        "create a file",
+        "make a list",
+        "generate code",
+        "write a story"
+      ]
+    },
+    {
+      "id": "command_modify_content",
+      "name": "Modify Content",
+      "category": "command",
+      "patterns": [
+        "edit",
+        "update",
+        "change",
+        "modify",
+        "fix",
+        "correct"
+      ],
+      "examples": [
+        "edit this file",
+        "update the config",
+        "fix the bug"
+      ]
+    },
+    {
+      "id": "command_delete_content",
+      "name": "Delete Content",
+      "category": "command",
+      "patterns": [
+        "delete",
+        "remove",
+        "erase",
+        "clear",
+        "drop"
+      ],
+      "examples": [
+        "delete this file",
+        "remove the entry",
+        "clear the cache"
+      ]
+    },
+    {
+      "id": "command_search_info",
+      "name": "Search Information",
+      "category": "command",
+      "patterns": [
+        "search",
+        "find",
+        "lookup",
+        "locate",
+        "discover"
+      ],
+      "examples": [
+        "search for python docs",
+        "find the error",
+        "lookup the definition"
+      ]
+    },
+    {
+      "id": "greeting_hello",
+      "name": "Hello Greeting",
+      "category": "social",
+      "patterns": [
+        "hello",
+        "hi",
+        "hey",
+        "good morning",
+        "good afternoon",
+        "good evening"
+      ],
+      "examples": [
+        "hello",
+        "hi there",
+        "good morning"
+      ]
+    },
+    {
+      "id": "greeting_goodbye",
+      "name": "Goodbye Greeting",
+      "category": "social",
+      "patterns": [
+        "goodbye",
+        "bye",
+        "see you",
+        "farewell",
+        "take care"
+      ],
+      "examples": [
+        "goodbye",
+        "see you later",
+        "take care"
+      ]
+    },
+    {
+      "id": "greeting_thanks",
+      "name": "Thanks Expression",
+      "category": "social",
+      "patterns": [
+        "thank you",
+        "thanks",
+        "appreciate",
+        "grateful"
+      ],
+      "examples": [
+        "thank you",
+        "thanks a lot",
+        "I appreciate it"
+      ]
+    },
+    {
+      "id": "greeting_apology",
+      "name": "Apology Expression",
+      "category": "social",
+      "patterns": [
+        "sorry",
+        "apologize",
+        "my mistake",
+        "excuse me"
+      ],
+      "examples": [
+        "sorry",
+        "I apologize",
+        "my mistake"
+      ]
+    },
+    {
+      "id": "confirmation_yes",
+      "name": "Yes Confirmation",
+      "category": "response",
+      "patterns": [
+        "yes",
+        "yeah",
+        "sure",
+        "okay",
+        "ok",
+        "correct",
+        "right"
+      ],
+      "examples": [
+        "yes",
+        "sure",
+        "that's correct"
+      ]
+    },
+    {
+      "id": "confirmation_no",
+      "name": "No Confirmation",
+      "category": "response",
+      "patterns": [
+        "no",
+        "nope",
+        "never",
+        "incorrect",
+        "wrong"
+      ],
+      "examples": [
+        "no",
+        "that's wrong",
+        "never"
+      ]
+    },
+    {
+      "id": "clarification_request",
+      "name": "Request Clarification",
+      "category": "response",
+      "patterns": [
+        "what do you mean",
+        "explain",
+        "clarify",
+        "more details",
+        "elaborate"
+      ],
+      "examples": [
+        "what do you mean",
+        "can you explain",
+        "give me more details"
+      ]
+    },
+    {
+      "id": "time_current",
+      "name": "Current Time",
+      "category": "utility",
+      "patterns": [
+        "what time",
+        "current time",
+        "now",
+        "clock"
+      ],
+      "examples": [
+        "what time is it",
+        "current time",
+        "tell me the time"
+      ]
+    },
+    {
+      "id": "date_current",
+      "name": "Current Date",
+      "category": "utility",
+      "patterns": [
+        "what date",
+        "today",
+        "current date",
+        "what day"
+      ],
+      "examples": [
+        "what date is it",
+        "what day is today",
+        "current date"
+      ]
+    },
+    {
+      "id": "weather_query",
+      "name": "Weather Query",
+      "category": "utility",
+      "patterns": [
+        "weather",
+        "forecast",
+        "temperature",
+        "rain",
+        "sunny"
+      ],
+      "examples": [
+        "weather today",
+        "will it rain",
+        "temperature now"
+      ]
+    },
+    {
+      "id": "location_info",
+      "name": "Location Information",
+      "category": "utility",
+      "patterns": [
+        "where is",
+        "location",
+        "address",
+        "directions",
+        "map"
+      ],
+      "examples": [
+        "where is Bangkok",
+        "show me the map",
+        "directions to airport"
+      ]
+    },
+    {
+      "id": "translation_request",
+      "name": "Translation Request",
+      "category": "language",
+      "patterns": [
+        "translate",
+        "meaning in",
+        "how to say",
+        "convert language"
+      ],
+      "examples": [
+        "translate hello to Thai",
+        "what does this mean in English"
+      ]
+    },
+    {
+      "id": "language_definition",
+      "name": "Word Definition",
+      "category": "language",
+      "patterns": [
+        "define",
+        "meaning of",
+        "what means",
+        "dictionary"
+      ],
+      "examples": [
+        "define AI",
+        "what is the meaning of love",
+        "dictionary lookup"
+      ]
+    },
+    {
+      "id": "language_synonym",
+      "name": "Synonym/Antonym",
+      "category": "language",
+      "patterns": [
+        "synonym",
+        "antonym",
+        "opposite",
+        "similar word"
+      ],
+      "examples": [
+        "synonym of happy",
+        "opposite of big",
+        "similar word to fast"
+      ]
+    },
+    {
+      "id": "code_generation",
+      "name": "Code Generation",
+      "category": "programming",
+      "patterns": [
+        "write code",
+        "generate code",
+        "create function",
+        "make script"
+      ],
+      "examples": [
+        "write a python function",
+        "generate HTML code",
+        "create a script"
+      ]
+    },
+    {
+      "id": "code_debugging",
+      "name": "Code Debugging",
+      "category": "programming",
+      "patterns": [
+        "debug",
+        "fix error",
+        "find bug",
+        "troubleshoot"
+      ],
+      "examples": [
+        "debug this code",
+        "fix the error",
+        "find the bug"
+      ]
+    },
+    {
+      "id": "code_explanation",
+      "name": "Code Explanation",
+      "category": "programming",
+      "patterns": [
+        "explain code",
+        "what does this do",
+        "how this works"
+      ],
+      "examples": [
+        "explain this code",
+        "what does this function do"
+      ]
+    },
+    {
+      "id": "code_optimization",
+      "name": "Code Optimization",
+      "category": "programming",
+      "patterns": [
+        "optimize",
+        "improve performance",
+        "make faster",
+        "refactor"
+      ],
+      "examples": [
+        "optimize this code",
+        "make it faster",
+        "refactor for clarity"
+      ]
+    },
+    {
+      "id": "file_read",
+      "name": "Read File",
+      "category": "file_operation",
+      "patterns": [
+        "read file",
+        "open file",
+        "show content",
+        "display file"
+      ],
+      "examples": [
+        "read config.json",
+        "show me the file",
+        "open document.txt"
+      ]
+    },
+    {
+      "id": "file_write",
+      "name": "Write File",
+      "category": "file_operation",
+      "patterns": [
+        "write to file",
+        "save file",
+        "create file",
+        "store data"
+      ],
+      "examples": [
+        "write data to file",
+        "save this as txt",
+        "create new file"
+      ]
+    },
+    {
+      "id": "file_list",
+      "name": "List Files",
+      "category": "file_operation",
+      "patterns": [
+        "list files",
+        "show directory",
+        "what files",
+        "folder contents"
+      ],
+      "examples": [
+        "list all files",
+        "show directory contents",
+        "what files are here"
+      ]
+    },
+    {
+      "id": "system_status",
+      "name": "System Status",
+      "category": "system",
+      "patterns": [
+        "status",
+        "health check",
+        "system info",
+        "are you working"
+      ],
+      "examples": [
+        "system status",
+        "are you working",
+        "health check"
+      ]
+    },
+    {
+      "id": "system_restart",
+      "name": "System Restart",
+      "category": "system",
+      "patterns": [
+        "restart",
+        "reboot",
+        "reset",
+        "start over"
+      ],
+      "examples": [
+        "restart the system",
+        "reboot now",
+        "reset everything"
+      ]
+    },
+    {
+      "id": "system_config",
+      "name": "System Configuration",
+      "category": "system",
+      "patterns": [
+        "configure",
+        "settings",
+        "preferences",
+        "options"
+      ],
+      "examples": [
+        "configure settings",
+        "change preferences",
+        "update options"
+      ]
+    },
+    {
+      "id": "data_analysis",
+      "name": "Data Analysis",
+      "category": "analytics",
+      "patterns": [
+        "analyze",
+        "statistics",
+        "trend",
+        "pattern",
+        "insight"
+      ],
+      "examples": [
+        "analyze this data",
+        "show statistics",
+        "find trends"
+      ]
+    },
+    {
+      "id": "data_visualization",
+      "name": "Data Visualization",
+      "category": "analytics",
+      "patterns": [
+        "chart",
+        "graph",
+        "plot",
+        "visualize",
+        "diagram"
+      ],
+      "examples": [
+        "create a chart",
+        "plot the data",
+        "visualize trends"
+      ]
+    },
+    {
+      "id": "data_extraction",
+      "name": "Data Extraction",
+      "category": "analytics",
+      "patterns": [
+        "extract",
+        "parse",
+        "scrape",
+        "pull data"
+      ],
+      "examples": [
+        "extract data from file",
+        "parse JSON",
+        "scrape website"
+      ]
+    },
+    {
+      "id": "schedule_event",
+      "name": "Schedule Event",
+      "category": "productivity",
+      "patterns": [
+        "schedule",
+        "reminder",
+        "alarm",
+        "calendar",
+        "appointment"
+      ],
+      "examples": [
+        "schedule a meeting",
+        "set a reminder",
+        "add to calendar"
+      ]
+    },
+    {
+      "id": "task_management",
+      "name": "Task Management",
+      "category": "productivity",
+      "patterns": [
+        "todo",
+        "task",
+        "to-do",
+        "checklist",
+        "goal"
+      ],
+      "examples": [
+        "add to todo list",
+        "create a task",
+        "manage my goals"
+      ]
+    },
+    {
+      "id": "note_taking",
+      "name": "Note Taking",
+      "category": "productivity",
+      "patterns": [
+        "note",
+        "memo",
+        "jot down",
+        "remember this"
+      ],
+      "examples": [
+        "take a note",
+        "write a memo",
+        "remember this information"
+      ]
+    },
+    {
+      "id": "email_compose",
+      "name": "Email Composition",
+      "category": "communication",
+      "patterns": [
+        "compose email",
+        "write email",
+        "draft message",
+        "send mail"
+      ],
+      "examples": [
+        "compose an email",
+        "draft a message",
+        "write to John"
+      ]
+    },
+    {
+      "id": "message_send",
+      "name": "Message Sending",
+      "category": "communication",
+      "patterns": [
+        "send message",
+        "text",
+        "chat",
+        "notify"
+      ],
+      "examples": [
+        "send a message",
+        "text Mary",
+        "notify the team"
+      ]
+    },
+    {
+      "id": "call_initiate",
+      "name": "Call Initiation",
+      "category": "communication",
+      "patterns": [
+        "call",
+        "phone",
+        "dial",
+        "ring"
+      ],
+      "examples": [
+        "call mom",
+        "dial this number",
+        "phone John"
+      ]
+    },
+    {
+      "id": "entertainment_music",
+      "name": "Music Request",
+      "category": "entertainment",
+      "patterns": [
+        "play music",
+        "song",
+        "track",
+        "artist",
+        "album"
+      ],
+      "examples": [
+        "play some music",
+        "who sings this",
+        "recommend a song"
+      ]
+    },
+    {
+      "id": "entertainment_movie",
+      "name": "Movie/TV Request",
+      "category": "entertainment",
+      "patterns": [
+        "movie",
+        "film",
+        "TV show",
+        "series",
+        "watch"
+      ],
+      "examples": [
+        "recommend a movie",
+        "what to watch",
+        "best TV series"
+      ]
+    },
+    {
+      "id": "entertainment_game",
+      "name": "Game Request",
+      "category": "entertainment",
+      "patterns": [
+        "game",
+        "play game",
+        "gaming",
+        "video game"
+      ],
+      "examples": [
+        "suggest a game",
+        "let's play",
+        "best video games"
+      ]
+    },
+    {
+      "id": "entertainment_joke",
+      "name": "Joke Request",
+      "category": "entertainment",
+      "patterns": [
+        "joke",
+        "funny",
+        "laugh",
+        "humor"
+      ],
+      "examples": [
+        "tell me a joke",
+        "something funny",
+        "make me laugh"
+      ]
+    },
+    {
+      "id": "health_symptom",
+      "name": "Health Symptom Check",
+      "category": "health",
+      "patterns": [
+        "symptom",
+        "feel sick",
+        "pain",
+        "illness",
+        "ache"
+      ],
+      "examples": [
+        "I have a headache",
+        "symptoms of flu",
+        "my stomach hurts"
+      ]
+    },
+    {
+      "id": "health_advice",
+      "name": "Health Advice",
+      "category": "health",
+      "patterns": [
+        "health tip",
+        "diet",
+        "exercise",
+        "wellness",
+        "fitness"
+      ],
+      "examples": [
+        "health tips",
+        "diet advice",
+        "exercise routine"
+      ]
+    },
+    {
+      "id": "emergency_help",
+      "name": "Emergency Help",
+      "category": "emergency",
+      "patterns": [
+        "emergency",
+        "help",
+        "urgent",
+        "danger",
+        "accident"
+      ],
+      "examples": [
+        "emergency help",
+        "I need help",
+        "urgent situation"
+      ]
+    },
+    {
+      "id": "learning_topic",
+      "name": "Learning Topic",
+      "category": "education",
+      "patterns": [
+        "learn",
+        "study",
+        "teach me",
+        "course",
+        "lesson"
+      ],
+      "examples": [
+        "teach me python",
+        "I want to learn AI",
+        "explain quantum physics"
+      ]
+    },
+    {
+      "id": "quiz_test",
+      "name": "Quiz/Test",
+      "category": "education",
+      "patterns": [
+        "quiz",
+        "test",
+        "exam",
+        "practice",
+        "question"
+      ],
+      "examples": [
+        "give me a quiz",
+        "practice questions",
+        "test my knowledge"
+      ]
+    },
+    {
+      "id": "research_topic",
+      "name": "Research Topic",
+      "category": "education",
+      "patterns": [
+        "research",
+        "investigate",
+        "study on",
+        "paper",
+        "thesis"
+      ],
+      "examples": [
+        "research on climate change",
+        "find papers on AI",
+        "study this topic"
+      ]
+    },
+    {
+      "id": "shopping_product",
+      "name": "Product Search",
+      "category": "shopping",
+      "patterns": [
+        "buy",
+        "purchase",
+        "product",
+        "item",
+        "shop for"
+      ],
+      "examples": [
+        "buy a laptop",
+        "find best phone",
+        "shop for clothes"
+      ]
+    },
+    {
+      "id": "shopping_comparison",
+      "name": "Product Comparison",
+      "category": "shopping",
+      "patterns": [
+        "compare products",
+        "which is better",
+        "versus",
+        "vs"
+      ],
+      "examples": [
+        "iPhone vs Android",
+        "compare these laptops",
+        "which is better"
+      ]
+    },
+    {
+      "id": "shopping_review",
+      "name": "Product Review",
+      "category": "shopping",
+      "patterns": [
+        "review",
+        "rating",
+        "opinion on product",
+        "customer feedback"
+      ],
+      "examples": [
+        "reviews of this phone",
+        "rating of this hotel",
+        "customer opinions"
+      ]
+    },
+    {
+      "id": "travel_destination",
+      "name": "Travel Destination",
+      "category": "travel",
+      "patterns": [
+        "travel to",
+        "visit",
+        "destination",
+        "trip",
+        "vacation"
+      ],
+      "examples": [
+        "places to visit",
+        "best vacation spots",
+        "travel recommendations"
+      ]
+    },
+    {
+      "id": "travel_booking",
+      "name": "Travel Booking",
+      "category": "travel",
+      "patterns": [
+        "book flight",
+        "reserve hotel",
+        "booking",
+        "ticket"
+      ],
+      "examples": [
+        "book a flight",
+        "reserve a hotel",
+        "buy train ticket"
+      ]
+    },
+    {
+      "id": "travel_itinerary",
+      "name": "Travel Itinerary",
+      "category": "travel",
+      "patterns": [
+        "itinerary",
+        "plan trip",
+        "schedule travel",
+        "route"
+      ],
+      "examples": [
+        "plan my trip",
+        "create itinerary",
+        "best route to take"
+      ]
+    },
+    {
+      "id": "cooking_recipe",
+      "name": "Recipe Request",
+      "category": "cooking",
+      "patterns": [
+        "recipe",
+        "cook",
+        "how to make",
+        "ingredients",
+        "preparation"
+      ],
+      "examples": [
+        "recipe for pasta",
+        "how to cook rice",
+        "ingredients for cake"
+      ]
+    },
+    {
+      "id": "cooking_nutrition",
+      "name": "Nutrition Info",
+      "category": "cooking",
+      "patterns": [
+        "calories",
+        "nutrition",
+        "protein",
+        "carbs",
+        "fat"
+      ],
+      "examples": [
+        "calories in apple",
+        "nutrition facts",
+        "protein content"
+      ]
+    },
+    {
+      "id": "relationship_advice",
+      "name": "Relationship Advice",
+      "category": "social_advice",
+      "patterns": [
+        "relationship",
+        "dating",
+        "friendship",
+        "love",
+        "breakup"
+      ],
+      "examples": [
+        "relationship advice",
+        "how to make friends",
+        "dealing with breakup"
+      ]
+    },
+    {
+      "id": "career_advice",
+      "name": "Career Advice",
+      "category": "social_advice",
+      "patterns": [
+        "career",
+        "job",
+        "interview",
+        "resume",
+        "promotion"
+      ],
+      "examples": [
+        "career advice",
+        "job interview tips",
+        "resume help"
+      ]
+    },
+    {
+      "id": "legal_info",
+      "name": "Legal Information",
+      "category": "legal",
+      "patterns": [
+        "law",
+        "legal",
+        "rights",
+        "contract",
+        "regulation"
+      ],
+      "examples": [
+        "legal rights",
+        "contract law",
+        "understand regulations"
+      ]
+    },
+    {
+      "id": "news_current",
+      "name": "Current News",
+      "category": "news",
+      "patterns": [
+        "news",
+        "headline",
+        "current events",
+        "latest",
+        "breaking"
+      ],
+      "examples": [
+        "latest news",
+        "what's happening",
+        "breaking news"
+      ]
+    },
+    {
+      "id": "sports_score",
+      "name": "Sports Score",
+      "category": "sports",
+      "patterns": [
+        "score",
+        "game result",
+        "match",
+        "team",
+        "player stats"
+      ],
+      "examples": [
+        "football score",
+        "who won the game",
+        "player statistics"
+      ]
+    },
+    {
+      "id": "hobby_suggestion",
+      "name": "Hobby Suggestion",
+      "category": "lifestyle",
+      "patterns": [
+        "hobby",
+        "interest",
+        "pastime",
+        "activity",
+        "leisure"
+      ],
+      "examples": [
+        "suggest a hobby",
+        "new interests",
+        "fun activities"
+      ]
+    },
+    {
+      "id": "fashion_style",
+      "name": "Fashion Style",
+      "category": "lifestyle",
+      "patterns": [
+        "fashion",
+        "style",
+        "outfit",
+        "clothing",
+        "trend"
+      ],
+      "examples": [
+        "fashion trends",
+        "style advice",
+        "outfit ideas"
+      ]
+    },
+    {
+      "id": "home_improvement",
+      "name": "Home Improvement",
+      "category": "lifestyle",
+      "patterns": [
+        "home repair",
+        "DIY",
+        "renovate",
+        "decorate",
+        "fix"
+      ],
+      "examples": [
+        "how to fix leak",
+        "DIY project",
+        "home decoration"
+      ]
+    },
+    {
+      "id": "pet_care",
+      "name": "Pet Care",
+      "category": "lifestyle",
+      "patterns": [
+        "pet",
+        "dog",
+        "cat",
+        "animal care",
+        "veterinary"
+      ],
+      "examples": [
+        "pet care tips",
+        "dog training",
+        "cat health"
+      ]
+    },
+    {
+      "id": "garden_plant",
+      "name": "Gardening",
+      "category": "lifestyle",
+      "patterns": [
+        "garden",
+        "plant",
+        "flower",
+        "tree",
+        "grow"
+      ],
+      "examples": [
+        "how to grow tomatoes",
+        "plant care",
+        "gardening tips"
+      ]
+    },
+    {
+      "id": "tech_support",
+      "name": "Tech Support",
+      "category": "technology",
+      "patterns": [
+        "tech help",
+        "computer problem",
+        "software issue",
+        "hardware"
+      ],
+      "examples": [
+        "computer not working",
+        "software crash",
+        "hardware problem"
+      ]
+    },
+    {
+      "id": "security_privacy",
+      "name": "Security & Privacy",
+      "category": "technology",
+      "patterns": [
+        "security",
+        "privacy",
+        "password",
+        "hack",
+        "protect"
+      ],
+      "examples": [
+        "secure my account",
+        "privacy settings",
+        "password protection"
+      ]
+    },
+    {
+      "id": "ai_capability",
+      "name": "AI Capability Inquiry",
+      "category": "meta",
+      "patterns": [
+        "can you",
+        "are you able",
+        "what can you do",
+        "capabilities"
+      ],
+      "examples": [
+        "can you help me",
+        "what can you do",
+        "your capabilities"
+      ]
+    },
+    {
+      "id": "feedback_provide",
+      "name": "Provide Feedback",
+      "category": "meta",
+      "patterns": [
+        "feedback",
+        "suggestion",
+        "improve",
+        "criticism",
+        "comment"
+      ],
+      "examples": [
+        "I have feedback",
+        "suggestion for improvement",
+        "my comment"
+      ]
+    },
+    {
+      "id": "unclear_ambiguous",
+      "name": "Unclear/Ambiguous",
+      "category": "fallback",
+      "patterns": [
+        "ไม่แน่ใจ",
+        "งง",
+        "หมายถึงอะไร",
+        "ช่วยอธิบาย",
+        "ไม่เข้าใจ"
+      ],
+      "examples": [
+        "I'm not sure",
+        "this is confusing",
+        "unclear request"
+      ]
+    },
+    {
+      "id": "knowledge_factual_query",
+      "name": "Factual Knowledge Query",
+      "category": "inquiry",
+      "description": "ถามข้อเท็จจริงทั่วไป เช่น ใคร คือ อะไร ที่ไหน เมื่อไหร่ ทำไม",
+      "patterns": [
+        "ใครคือ",
+        "อะไรคือ",
+        "คืออะไร",
+        "หมายถึงอะไร",
+        "อยู่ที่ไหน",
+        "เมืองหลวง",
+        "ประธานาธิบดี",
+        "ประเทศอะไร",
+        "who is",
+        "what is",
+        "where is",
+        "capital of",
+        "president of",
+        "คืออะไร",
+        "คือใคร",
+        "เป็นใคร"
+      ],
+      "examples": [
+        "ใครคือประธานาธิบดีสหรัฐอเมริกา",
+        "เมืองหลวงของไทยคืออะไร",
+        "ค่าพายคืออะไร",
+        "who is the president of usa",
+        "what is the capital of thailand"
+      ]
+    }
+  ],
+  "categories": [
+    "calculation",
+    "finance",
+    "inquiry",
+    "command",
+    "social",
+    "response",
+    "utility",
+    "language",
+    "programming",
+    "file_operation",
+    "system",
+    "analytics",
+    "productivity",
+    "communication",
+    "entertainment",
+    "health",
+    "emergency",
+    "education",
+    "shopping",
+    "travel",
+    "cooking",
+    "social_advice",
+    "legal",
+    "news",
+    "sports",
+    "lifestyle",
+    "technology",
+    "meta",
+    "fallback"
+  ],
+  "confidence_thresholds": {
+    "high": 0.85,
+    "medium": 0.65,
+    "low": 0.45,
+    "fallback": 0.3
+  }
+}

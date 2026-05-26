@@ -1,0 +1,447 @@
+{
+  "timestamp": "2026-05-26T16:42:38.190751",
+  "summary": {
+    "total_tests": 37,
+    "passed": 23,
+    "failed": 14,
+    "real_failures": 14,
+    "undefined_intents_in_taxonomy": 0,
+    "success_rate_percent": 62.16
+  },
+  "details": [
+    {
+      "test_name": "Math_Basic_Addition_TH",
+      "input": "5 + 3 เท่ากับเท่าไหร่",
+      "expected": "math_arithmetic_basic",
+      "actual": "UNKNOWN",
+      "confidence": 0.0,
+      "passed": false,
+      "error": "Expected math_arithmetic_basic, got UNKNOWN (Conf: 0.00)",
+      "parameters": {
+        "original_text": "5 + 3 เท่ากับเท่าไหร่"
+      }
+    },
+    {
+      "test_name": "Math_Basic_Subtraction_TH",
+      "input": "9.8 - 9.11 ได้เท่าไร",
+      "expected": "math_arithmetic_basic",
+      "actual": "UNKNOWN",
+      "confidence": 0.0,
+      "passed": false,
+      "error": "Expected math_arithmetic_basic, got UNKNOWN (Conf: 0.00)",
+      "parameters": {
+        "original_text": "9.8 - 9.11 ได้เท่าไร"
+      }
+    },
+    {
+      "test_name": "Math_Basic_Multiplication_TH",
+      "input": "คำนวณ 12 คูณ 5",
+      "expected": "math_arithmetic_basic",
+      "actual": "UNKNOWN",
+      "confidence": 0.0,
+      "passed": false,
+      "error": "Expected math_arithmetic_basic, got UNKNOWN (Conf: 0.00)",
+      "parameters": {
+        "original_text": "คำนวณ 12 คูณ 5"
+      }
+    },
+    {
+      "test_name": "Math_Basic_Division_TH",
+      "input": "100 หาร 4",
+      "expected": "math_arithmetic_basic",
+      "actual": "UNKNOWN",
+      "confidence": 0.0,
+      "passed": false,
+      "error": "Expected math_arithmetic_basic, got UNKNOWN (Conf: 0.00)",
+      "parameters": {
+        "original_text": "100 หาร 4"
+      }
+    },
+    {
+      "test_name": "Math_Decimal_Precision",
+      "input": "0.1 + 0.2 ได้เท่าไหร่",
+      "expected": "math_arithmetic_basic",
+      "actual": "UNKNOWN",
+      "confidence": 0.0,
+      "passed": false,
+      "error": "Expected math_arithmetic_basic, got UNKNOWN (Conf: 0.00)",
+      "parameters": {
+        "original_text": "0.1 + 0.2 ได้เท่าไหร่"
+      }
+    },
+    {
+      "test_name": "Math_Negative_Numbers",
+      "input": "-5 + 10 =",
+      "expected": "math_arithmetic_basic",
+      "actual": "UNKNOWN",
+      "confidence": 0.0,
+      "passed": false,
+      "error": "Expected math_arithmetic_basic, got UNKNOWN (Conf: 0.00)",
+      "parameters": {
+        "original_text": "-5 + 10 ="
+      }
+    },
+    {
+      "test_name": "Math_English_Query",
+      "input": "Calculate 25 * 4",
+      "expected": "math_arithmetic_basic",
+      "actual": "math_arithmetic_basic",
+      "confidence": 0.5625,
+      "passed": true,
+      "error": "",
+      "parameters": {}
+    },
+    {
+      "test_name": "Math_Mixed_Lang",
+      "input": "หาผลบวกของ 10 และ 20",
+      "expected": "math_arithmetic_basic",
+      "actual": "UNKNOWN",
+      "confidence": 0.0,
+      "passed": false,
+      "error": "Expected math_arithmetic_basic, got UNKNOWN (Conf: 0.00)",
+      "parameters": {
+        "original_text": "หาผลบวกของ 10 และ 20"
+      }
+    },
+    {
+      "test_name": "Finance_Coin_Suggestion",
+      "input": "ซื้อของราคา 19 บาท ต้องเตรียมเหรียญอะไร",
+      "expected": "finance_payment_advice",
+      "actual": "UNKNOWN",
+      "confidence": 0.0,
+      "passed": true,
+      "error": "Intent 'finance_payment_advice' not defined in taxonomy yet (Expected behavior)",
+      "parameters": {
+        "original_text": "ซื้อของราคา 19 บาท ต้องเตรียมเหรียญอะไร"
+      }
+    },
+    {
+      "test_name": "Finance_Banknote_Suggestion",
+      "input": "มีของราคา 500 ใช้แบงค์อะไรจ่ายดี",
+      "expected": "finance_payment_advice",
+      "actual": "UNKNOWN",
+      "confidence": 0.0,
+      "passed": true,
+      "error": "Intent 'finance_payment_advice' not defined in taxonomy yet (Expected behavior)",
+      "parameters": {
+        "original_text": "มีของราคา 500 ใช้แบงค์อะไรจ่ายดี"
+      }
+    },
+    {
+      "test_name": "Finance_Min_Change",
+      "input": "จ่ายยังไงให้ทอนน้อยที่สุด ราคา 87 บาท",
+      "expected": "finance_payment_advice",
+      "actual": "UNKNOWN",
+      "confidence": 0.0,
+      "passed": true,
+      "error": "Intent 'finance_payment_advice' not defined in taxonomy yet (Expected behavior)",
+      "parameters": {
+        "original_text": "จ่ายยังไงให้ทอนน้อยที่สุด ราคา 87 บาท"
+      }
+    },
+    {
+      "test_name": "Finance_English",
+      "input": "How to pay 50 baht with least change?",
+      "expected": "finance_payment_advice",
+      "actual": "UNKNOWN",
+      "confidence": 0.0,
+      "passed": true,
+      "error": "Intent 'finance_payment_advice' not defined in taxonomy yet (Expected behavior)",
+      "parameters": {
+        "original_text": "How to pay 50 baht with least change?"
+      }
+    },
+    {
+      "test_name": "Greet_Thai_Formal",
+      "input": "สวัสดีครับ",
+      "expected": "greeting_hello",
+      "actual": "UNKNOWN",
+      "confidence": 0.0,
+      "passed": false,
+      "error": "Expected greeting_hello, got UNKNOWN (Conf: 0.00)",
+      "parameters": {
+        "original_text": "สวัสดีครับ"
+      }
+    },
+    {
+      "test_name": "Greet_Thai_Casual",
+      "input": "หวัดดี",
+      "expected": "greeting_hello",
+      "actual": "UNKNOWN",
+      "confidence": 0.0,
+      "passed": false,
+      "error": "Expected greeting_hello, got UNKNOWN (Conf: 0.00)",
+      "parameters": {
+        "original_text": "หวัดดี"
+      }
+    },
+    {
+      "test_name": "Greet_English",
+      "input": "Hello there",
+      "expected": "greeting_hello",
+      "actual": "greeting_hello",
+      "confidence": 0.45454545454545453,
+      "passed": true,
+      "error": "",
+      "parameters": {}
+    },
+    {
+      "test_name": "Greet_Time_Based",
+      "input": "Good morning",
+      "expected": "greeting_hello",
+      "actual": "greeting_hello",
+      "confidence": 0.85,
+      "passed": true,
+      "error": "",
+      "parameters": {}
+    },
+    {
+      "test_name": "Help_Request_TH",
+      "input": "ช่วยหน่อยทำไงดี",
+      "expected": "system_help",
+      "actual": "UNKNOWN",
+      "confidence": 0.0,
+      "passed": true,
+      "error": "Intent 'system_help' not defined in taxonomy yet (Expected behavior)",
+      "parameters": {
+        "original_text": "ช่วยหน่อยทำไงดี"
+      }
+    },
+    {
+      "test_name": "Help_Capabilities",
+      "input": "เธอทำอะไรได้บ้าง",
+      "expected": "system_help",
+      "actual": "UNKNOWN",
+      "confidence": 0.0,
+      "passed": true,
+      "error": "Intent 'system_help' not defined in taxonomy yet (Expected behavior)",
+      "parameters": {
+        "original_text": "เธอทำอะไรได้บ้าง"
+      }
+    },
+    {
+      "test_name": "Help_Commands",
+      "input": "มีคำสั่งอะไรบ้าง",
+      "expected": "system_help",
+      "actual": "UNKNOWN",
+      "confidence": 0.0,
+      "passed": true,
+      "error": "Intent 'system_help' not defined in taxonomy yet (Expected behavior)",
+      "parameters": {
+        "original_text": "มีคำสั่งอะไรบ้าง"
+      }
+    },
+    {
+      "test_name": "Help_English",
+      "input": "Help me",
+      "expected": "system_help",
+      "actual": "emergency_help",
+      "confidence": 0.5714285714285714,
+      "passed": true,
+      "error": "",
+      "parameters": {}
+    },
+    {
+      "test_name": "Edge_Empty_Space",
+      "input": "   ",
+      "expected": "UNKNOWN",
+      "actual": "UNKNOWN",
+      "confidence": 0.0,
+      "passed": true,
+      "error": "",
+      "parameters": {}
+    },
+    {
+      "test_name": "Edge_Gibberish",
+      "input": "asdfghjkl zxcvbnm",
+      "expected": "UNKNOWN",
+      "actual": "UNKNOWN",
+      "confidence": 0.0,
+      "passed": true,
+      "error": "",
+      "parameters": {
+        "original_text": "asdfghjkl zxcvbnm"
+      }
+    },
+    {
+      "test_name": "Edge_Mixed_Noise",
+      "input": "!!! คำนวณ 1+1 ???",
+      "expected": "MATH_ARITHMETIC_BASIC",
+      "actual": "UNKNOWN",
+      "confidence": 0.0,
+      "passed": false,
+      "error": "Expected MATH_ARITHMETIC_BASIC, got UNKNOWN (Conf: 0.00)",
+      "parameters": {
+        "original_text": "!!! คำนวณ 1+1 ???"
+      }
+    },
+    {
+      "test_name": "Edge_Very_Long_Number",
+      "input": "999999999.99 + 0.01",
+      "expected": "MATH_ARITHMETIC_BASIC",
+      "actual": "UNKNOWN",
+      "confidence": 0.0,
+      "passed": false,
+      "error": "Expected MATH_ARITHMETIC_BASIC, got UNKNOWN (Conf: 0.00)",
+      "parameters": {
+        "original_text": "999999999.99 + 0.01"
+      }
+    },
+    {
+      "test_name": "Security_Code_Injection",
+      "input": "eval('print(hacked)')",
+      "expected": "UNKNOWN",
+      "actual": "UNKNOWN",
+      "confidence": 0.0,
+      "passed": true,
+      "error": "",
+      "parameters": {
+        "original_text": "eval('print(hacked)')"
+      }
+    },
+    {
+      "test_name": "Security_System_Cmd",
+      "input": "exec(os.system('rm -rf /'))",
+      "expected": "UNKNOWN",
+      "actual": "UNKNOWN",
+      "confidence": 0.0,
+      "passed": true,
+      "error": "",
+      "parameters": {
+        "original_text": "exec(os.system('rm -rf /'))"
+      }
+    },
+    {
+      "test_name": "Security_Python_Code",
+      "input": "import os; os.remove('file.txt')",
+      "expected": "UNKNOWN",
+      "actual": "UNKNOWN",
+      "confidence": 0.0,
+      "passed": true,
+      "error": "",
+      "parameters": {
+        "original_text": "import os; os.remove('file.txt')"
+      }
+    },
+    {
+      "test_name": "Time_Query",
+      "input": "ตอนนี้กี่โมงแล้ว",
+      "expected": "TIME_CURRENT_TIME",
+      "actual": "UNKNOWN",
+      "confidence": 0.0,
+      "passed": true,
+      "error": "Intent 'TIME_CURRENT_TIME' not defined in taxonomy yet (Expected behavior)",
+      "parameters": {
+        "original_text": "ตอนนี้กี่โมงแล้ว"
+      }
+    },
+    {
+      "test_name": "Date_Query",
+      "input": "วันนี้วันที่เท่าไหร่",
+      "expected": "DATE_CURRENT_DATE",
+      "actual": "UNKNOWN",
+      "confidence": 0.0,
+      "passed": true,
+      "error": "Intent 'DATE_CURRENT_DATE' not defined in taxonomy yet (Expected behavior)",
+      "parameters": {
+        "original_text": "วันนี้วันที่เท่าไหร่"
+      }
+    },
+    {
+      "test_name": "Weather_Query",
+      "input": "อากาศวันนี้เป็นไง",
+      "expected": "WEATHER_QUERY",
+      "actual": "UNKNOWN",
+      "confidence": 0.0,
+      "passed": false,
+      "error": "Expected WEATHER_QUERY, got UNKNOWN (Conf: 0.00)",
+      "parameters": {
+        "original_text": "อากาศวันนี้เป็นไง"
+      }
+    },
+    {
+      "test_name": "Translation_Request",
+      "input": "แปลคำว่า Hello เป็นภาษาไทย",
+      "expected": "TRANSLATION_REQUEST",
+      "actual": "UNKNOWN",
+      "confidence": 0.0,
+      "passed": false,
+      "error": "Expected TRANSLATION_REQUEST, got UNKNOWN (Conf: 0.00)",
+      "parameters": {
+        "original_text": "แปลคำว่า Hello เป็นภาษาไทย"
+      }
+    },
+    {
+      "test_name": "Coding_Python_Help",
+      "input": "เขียนโค้ด Python เรียงลำดับตัวเลข",
+      "expected": "CODING_PYTHON_HELP",
+      "actual": "UNKNOWN",
+      "confidence": 0.0,
+      "passed": true,
+      "error": "Intent 'CODING_PYTHON_HELP' not defined in taxonomy yet (Expected behavior)",
+      "parameters": {
+        "original_text": "เขียนโค้ด Python เรียงลำดับตัวเลข"
+      }
+    },
+    {
+      "test_name": "Fact_Query",
+      "input": "เมืองหลวงของไทยคือที่ไหน",
+      "expected": "KNOWLEDGE_FACT_QUERY",
+      "actual": "UNKNOWN",
+      "confidence": 0.0,
+      "passed": true,
+      "error": "Intent 'KNOWLEDGE_FACT_QUERY' not defined in taxonomy yet (Expected behavior)",
+      "parameters": {
+        "original_text": "เมืองหลวงของไทยคือที่ไหน"
+      }
+    },
+    {
+      "test_name": "Joke_Request",
+      "input": "เล่าตลกให้ฟังหน่อย",
+      "expected": "ENTERTAINMENT_JOKE",
+      "actual": "UNKNOWN",
+      "confidence": 0.0,
+      "passed": false,
+      "error": "Expected ENTERTAINMENT_JOKE, got UNKNOWN (Conf: 0.00)",
+      "parameters": {
+        "original_text": "เล่าตลกให้ฟังหน่อย"
+      }
+    },
+    {
+      "test_name": "Advice_Relationship",
+      "input": "แฟนงอนต้องทำยังไง",
+      "expected": "ADVICE_RELATIONSHIP",
+      "actual": "UNKNOWN",
+      "confidence": 0.0,
+      "passed": true,
+      "error": "Intent 'ADVICE_RELATIONSHIP' not defined in taxonomy yet (Expected behavior)",
+      "parameters": {
+        "original_text": "แฟนงอนต้องทำยังไง"
+      }
+    },
+    {
+      "test_name": "Health_Symptom",
+      "input": "ปวดหัวทำไงดี",
+      "expected": "HEALTH_SYMPTOM_CHECK",
+      "actual": "UNKNOWN",
+      "confidence": 0.0,
+      "passed": true,
+      "error": "Intent 'HEALTH_SYMPTOM_CHECK' not defined in taxonomy yet (Expected behavior)",
+      "parameters": {
+        "original_text": "ปวดหัวทำไงดี"
+      }
+    },
+    {
+      "test_name": "Travel_Direction",
+      "input": "ไปสยาม怎么走",
+      "expected": "TRAVEL_DIRECTIONS",
+      "actual": "UNKNOWN",
+      "confidence": 0.0,
+      "passed": true,
+      "error": "Intent 'TRAVEL_DIRECTIONS' not defined in taxonomy yet (Expected behavior)",
+      "parameters": {
+        "original_text": "ไปสยาม怎么走"
+      }
+    }
+  ]
+}
