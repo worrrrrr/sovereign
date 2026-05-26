@@ -1,0 +1,21 @@
+# Sovereign AI Configuration
+
+# Safety settings
+safety:
+  forbidden_patterns:
+    - eval
+    - exec
+    - __import__
+  allow_os_system: false
+  allow_subprocess_shell: false
+
+# Floating-point tolerance settings
+tolerance:
+  rel_tol: 1e-9
+  abs_tol: 1e-12
+
+# Re-plan limit (maximum 3 attempts per constitution)
+replan_limit: 3
+
+# Execution timeout in milliseconds
+execution_timeout_ms: 5000

@@ -1,0 +1,11 @@
+# Sovereign AI Requirements
+
+# Core dependencies
+pytest>=7.0.0
+pyyaml>=6.0
+
+# Optional but recommended for type checking
+mypy>=1.0.0
+
+# No LLM dependencies - this is intentional per architecture
+# No eval/exec related libraries
