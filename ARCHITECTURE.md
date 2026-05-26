@@ -207,6 +207,47 @@ x=0.69
 user: แสดงวิธีอื่นได้หรือไม่
 ai: ได้
 9.8-9.11=x
+
+---
+
+sovereign/
+├── core/                       # แกนหลักของระบบ
+│   ├── orchestrator.py         # ตัวควบคุม flow (perceive → plan → exec → verify)
+│   ├── memory_manager.py       # อ่าน/เขียน memory (short+long)
+│   ├── rule_engine.py          # โหลด config/rules.yaml, ตรวจสอบสิทธิ์
+│   └── utils.py                # approx_eq, helpers ,log
+│
+├── engines/                    # ส่วนประกอบที่ orchestrator เรียกใช้ (ตามลำดับ)
+│   ├── perception.py           # วิเคราะห์ intent, task_type
+│   ├── planner.py              # เลือกลำดับ tools จาก task_type
+│   ├── execution.py            # รัน tools (sandbox, timeout)
+│   └── critic.py               # ตรวจสอบ output (tolerance, schema)
+│
+├── tools/                      # Registry + เครื่องมือต่าง ๆ
+│   ├── __init__.py             # registry dict และฟังก์ชัน register
+│   ├── math.py                 # คำนวณ, แก้สมการ
+│   ├── datetime_tools.py       # นับวัน, เวลา
+│   ├── file_ops.py             # อ่าน/เขียน/ลบไฟล์ (เคารพ rules)
+│   └── ... (เพิ่มได้)
+│
+├── data/                       # ข้อมูลที่ไม่ใช่โค้ด
+│   ├── profile.md              # ข้อมูลผู้ใช้ (ชื่อ, MBTI, จุดอ่อน)
+│   ├── soul.md                 # บุคลิก วิธีคิดของ AI
+│   ├── knowledge.md            # ความรู้พื้นฐาน (สมการ, วันที่)
+│   └── memory/                 # ความจำ (auto generated)
+│       ├── short_session.json
+│       └── long_term.json
+│
+├── config/                     # การตั้งค่า
+│   └── rules.yaml              # safety, tolerance, replan limit
+│
+├── tests/                      # ทดสอบจริง (no mock)
+│   ├── test_float.py
+│   ├── test_date.py
+│   └── ...
+│
+├── main.py                     # CLI หรือ FastAPI entry point
+└── requirements.txt
 980-911=100x
 100x=69
 x=69/100
