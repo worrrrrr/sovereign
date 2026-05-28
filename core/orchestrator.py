@@ -9,10 +9,10 @@ import logging
 from typing import Dict, Any, Optional
 from dataclasses import dataclass
 
-# Import Engines
-from sovereign.core.perception import PerceptionEngine, IntentMatch
-from sovereign.engines.planner import PlannerEngine, ExecutionPlan
-from sovereign.engines.execution import ExecutionEngine, ExecutionResult
+# Import Engines - ใช้จาก engines module ทั้งหมด
+from engines.perception import PerceptionEngine, Task
+from engines.planner import PlannerEngine, ExecutionPlan
+from engines.execution import ExecutionEngine, ExecutionResult
 
 logger = logging.getLogger("Sovereign.Orchestrator")
 
@@ -37,7 +37,7 @@ class Orchestrator:
         try:
             # 1. Initialize Perception Engine
             self.perception = PerceptionEngine(
-                config_path="sovereign/config/intent_taxonomy.json"
+                taxonomy_path="config/intent_taxonomy.json"
             )
             
             # 2. Initialize Planner Engine
@@ -46,8 +46,9 @@ class Orchestrator:
             # 3. Initialize Execution Engine
             self.execution = ExecutionEngine(timeout_seconds=5.0)
             
-            # Import tools เพื่อลงทะเบียน
-            from sovereign.tools import core_tools  # noqa: F401
+            # Import tools เพื่อลงทะเบียน (ต้อง import math ก่อน core_tools เพราะ core_tools ใช้ registry)
+            from tools import math  # noqa: F401
+            from tools import core_tools  # noqa: F401
             
             logger.info("Sovereign AI Orchestrator initialized successfully.")
             
@@ -65,11 +66,11 @@ class Orchestrator:
         
         try:
             # Step 1: Perception (วิเคราะห์เจตนา)
-            intent_match = self.perception.analyze(user_input)
-            logger.debug(f"Intent detected: {intent_match.intent_id} (confidence: {intent_match.confidence:.2f})")
+            task = self.perception.analyze(user_input)
+            logger.debug(f"Task detected: {task.intent_id} (confidence: {task.confidence:.2f})")
             
             # ถ้าไม่รู้จัก Intent เลย
-            if intent_match.intent_id == "UNKNOWN":
+            if task.intent_id == "unknown":
                 return OrchestratorResponse(
                     success=False,
                     intent_id="UNKNOWN",
@@ -78,13 +79,13 @@ class Orchestrator:
                 )
             
             # Step 2: Planning (สร้างแผน)
-            plan = self.planner.create_plan(intent_match)
+            plan = self.planner.create_plan(task)
             
             if not plan.is_valid:
                 logger.warning(f"Planning failed: {plan.error_message}")
                 return OrchestratorResponse(
                     success=False,
-                    intent_id=intent_match.intent_id,
+                    intent_id=task.intent_id,
                     response_text=f"ขอโทษครับ เกิดข้อผิดพลาดในการวางแผน: {plan.error_message}",
                     error_message=plan.error_message
                 )
@@ -96,18 +97,18 @@ class Orchestrator:
                 logger.error(f"Execution failed: {result.error_message}")
                 return OrchestratorResponse(
                     success=False,
-                    intent_id=intent_match.intent_id,
+                    intent_id=task.intent_id,
                     response_text=f"ขอโทษครับ เกิดข้อผิดพลาดขณะดำเนินการ: {result.error_message}",
                     error_message=result.error_message,
                     raw_output=result.output
                 )
             
             # Step 4: Format Response (จัดรูปแบบคำตอบ)
-            response_text = self._format_response(intent_match, result)
+            response_text = self._format_response(task, result)
             
             return OrchestratorResponse(
                 success=True,
-                intent_id=intent_match.intent_id,
+                intent_id=task.intent_id,
                 response_text=response_text,
                 raw_output=result.output
             )
@@ -121,25 +122,25 @@ class Orchestrator:
                 error_message=str(e)
             )
 
-    def _format_response(self, intent: IntentMatch, result: ExecutionResult) -> str:
+    def _format_response(self, task: Task, result: ExecutionResult) -> str:
         """
         จัดรูปแบบผลลัพธ์ให้เป็นข้อความที่อ่านง่าย
         """
         output = result.output
         
         # กรณี Greeting (ไม่มี output จาก tool)
-        if intent.intent_id == "GENERAL_GREETING":
+        if task.intent_id == "greeting_hello":
             return "สวัสดีครับ! มีอะไรให้ผมช่วยวันนี้บอกได้เลยนะครับ 😊"
         
         # กรณีคำนวณเลข
-        if intent.intent_id == "MATH_ARITHMETIC_BASIC":
+        if task.intent_id == "math_arithmetic_basic":
             if isinstance(output, dict):
                 expr = output.get('expression', '')
                 res = output.get('result')
                 return f"ผลลัพธ์ของ {expr} = **{res}**"
         
         # กรณีแนะนำการชำระเงิน
-        if intent.intent_id == "FINANCE_PAYMENT_ADVICE":
+        if task.intent_id == "money_payment_advice":
             if isinstance(output, dict):
                 amount = output.get('amount', 0)
                 suggestion = output.get('suggestion', [])
@@ -156,20 +157,20 @@ class Orchestrator:
                 return "\n".join(lines)
         
         # กรณีถามเวลา
-        if intent.intent_id in ["TIME_QUERY", "DATE_QUERY"]:
+        if task.intent_id in ["time_current", "date_current"]:
             if isinstance(output, dict):
                 time_str = output.get('time', '')
                 date_str = output.get('date', '')
                 return f"ปัจจุบันเวลา {time_str} น. วันที่ {date_str}"
         
         # กรณีมุกตลก
-        if intent.intent_id == "JOKE_REQUEST":
+        if task.intent_id == "entertainment_joke":
             if isinstance(output, dict):
                 joke = output.get('joke', '')
                 return f"😄 {joke}"
         
         # กรณีแปลภาษา
-        if intent.intent_id == "TRANSLATION_REQUEST":
+        if task.intent_id == "translation_request":
             if isinstance(output, dict):
                 if output.get('success'):
                     original = output.get('original', '')
@@ -180,7 +181,7 @@ class Orchestrator:
                     return output.get('error', 'แปลไม่ได้')
         
         # กรณีแสดงรายชื่อ tools
-        if intent.intent_id == "SYSTEM_HELP":
+        if task.intent_id == "system_help":
             if isinstance(output, dict):
                 count = output.get('count', 0)
                 tools = output.get('tools', [])

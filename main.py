@@ -2,12 +2,12 @@
 """
 Sovereign AI - Main CLI Entry Point
 -----------------------------------
-ใช้งาน: python sovereign/main.py "ข้อความของคุณ"
+ใช้งาน: python main.py "ข้อความของคุณ"
 """
 
 import sys
 import logging
-from sovereign.orchestrator import get_orchestrator
+from core.orchestrator import get_orchestrator
 
 # ตั้งค่า Logging
 logging.basicConfig(
@@ -19,12 +19,12 @@ def main():
     if len(sys.argv) < 2:
         print("🤖 Sovereign AI - ระบบประมวลผลอัจฉริยะ")
         print("=" * 50)
-        print("วิธีใช้: python sovereign/main.py \"ข้อความของคุณ\"")
+        print("วิธีใช้: python main.py \"ข้อความของคุณ\"")
         print("\nตัวอย่าง:")
-        print('  python sovereign/main.py "9.8-9.11 ได้เท่าไร"')
-        print('  python sovereign/main.py "ซื้อของ 19 บาท ต้องเตรียมเงินยังไง"')
-        print('  python sovereign/main.py "สวัสดี"')
-        print('  python sovereign/main.py "เล่ามุกตลกให้ฟังหน่อย"')
+        print('  python main.py "9.8-9.11 ได้เท่าไร"')
+        print('  python main.py "ซื้อของ 19 บาท ต้องเตรียมเงินยังไง"')
+        print('  python main.py "สวัสดี"')
+        print('  python main.py "เล่ามุกตลกให้ฟังหน่อย"')
         sys.exit(0)
     
     # รวมข้อความทั้งหมดจาก arguments (รองรับช่องว่าง)
