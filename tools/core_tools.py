@@ -11,7 +11,7 @@ from typing import Dict, Any, List
 from datetime import datetime
 import random
 
-from sovereign.tools.registry import global_registry
+from tools.registry import global_registry
 
 # ==============================================================================
 # 1. MATHEMATICAL TOOLS (เครื่องมือคำนวณ)
@@ -218,7 +218,7 @@ def knowledge_lookup_wrapper(query: str, context: Dict[str, Any] = None) -> Dict
     Wrapper สำหรับเรียกใช้ KnowledgeLookupTool จาก core_tools
     เพื่อให้สอดคล้องกับรูปแบบการลงทะเบียน Tool อื่นๆ
     """
-    from sovereign.tools.knowledge_tool import tool_instance
+    from tools.knowledge_tool import tool_instance
     
     # เรียก execute โดยตรงจาก instance
     result = tool_instance.execute(query, context)

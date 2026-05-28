@@ -17,10 +17,9 @@ from typing import List, Dict, Any
 from datetime import datetime
 
 # เพิ่ม Path เพื่อให้ import ได้
-sys.path.insert(0, os.path.abspath(os.path.dirname(__file__) + '/../..'))
 sys.path.insert(0, os.path.abspath(os.path.dirname(__file__) + '/..'))
 
-from sovereign.core.perception import PerceptionEngine, IntentMatch
+from core.perception import PerceptionEngine, IntentMatch
 
 class TestResult:
     """คลาสเก็บผลลัพธ์การทดสอบแต่ละเคส"""

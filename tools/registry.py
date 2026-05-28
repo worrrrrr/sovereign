@@ -18,7 +18,7 @@ class ToolRegistry:
     def __init__(self):
         self._tools: Dict[str, Dict[str, Any]] = {}
 
-    def register(self, name: str, func: Callable, description: str, category: str):
+    def register(self, name: str, func: Callable, description: str, category: str, actions: Dict[str, Callable] = None):
         """ลงทะเบียนเครื่องมือใหม่"""
         if name in self._tools:
             logger.warning(f"Tool '{name}' is already registered. Overwriting...")
@@ -27,7 +27,8 @@ class ToolRegistry:
             "name": name,
             "function": func,
             "description": description,
-            "category": category
+            "category": category,
+            "actions": actions or {}  # เก็บ actions เพิ่มเติมถ้ามี
         }
         logger.debug(f"Registered tool: {name} ({category})")
 
@@ -36,6 +37,23 @@ class ToolRegistry:
         if name not in self._tools:
             raise KeyError(f"Tool '{name}' not found in registry.")
         return self._tools[name]["function"]
+
+    def get_action(self, tool_name: str, action_name: str) -> Callable:
+        """ดึงฟังก์ชัน action เฉพาะจาก tool"""
+        if tool_name not in self._tools:
+            raise KeyError(f"Tool '{tool_name}' not found in registry.")
+        
+        tool = self._tools[tool_name]
+        actions = tool.get("actions", {})
+        
+        if action_name in actions:
+            return actions[action_name]
+        
+        # ถ้าไม่มี action เฉพาะ ให้ fallback ไปใช้ function หลัก
+        if action_name == tool_name or not actions:
+            return tool["function"]
+        
+        raise KeyError(f"Action '{action_name}' not found in tool '{tool_name}'. Available: {list(actions.keys())}")
 
     def get_tool_info(self, name: str) -> Dict[str, Any]:
         """ดึงข้อมูลรายละเอียดของเครื่องมือ"""

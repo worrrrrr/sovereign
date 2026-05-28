@@ -7,7 +7,7 @@ Sovereign AI - Knowledge Lookup Tool (Production-Grade)
 
 import logging
 from typing import Dict, Any, Optional
-from sovereign.core.knowledge_base import get_knowledge_base
+from core.knowledge_base import get_knowledge_base
 
 logger = logging.getLogger("Sovereign.KnowledgeTool")
 

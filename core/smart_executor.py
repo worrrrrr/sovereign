@@ -2,11 +2,9 @@
 Execution Engine ที่รวม Intent Parser เข้ากับ Tools
 เพื่อประมวลผลคำสั่งและคำถามอย่างถูกต้อง
 """
-import sys
-sys.path.insert(0, '/workspace')
 
-from sovereign.core.intent_parser import IntentParser, IntentType, display_analysis
-# from sovereign.tools.registry import ToolRegistry  # ตัดออกชั่วคราว
+from core.intent_parser import IntentParser, IntentType, display_analysis
+# from tools.registry import ToolRegistry  # ตัดออกชั่วคราว
 from decimal import Decimal
 
 class SmartExecutor:

@@ -9,7 +9,7 @@ import logging
 import time
 from typing import Dict, Any, Optional
 from dataclasses import dataclass
-from sovereign.tools.registry import global_registry
+from tools.registry import global_registry
 
 logger = logging.getLogger("Sovereign.Execution")
 
@@ -63,9 +63,10 @@ class ExecutionEngine:
         รันหนึ่งขั้นตอนของแผน
         """
         tool_name = step.tool_name
-        arguments = step.arguments
+        action_name = step.action
+        arguments = step.parameters
         
-        logger.info(f"Executing tool: {tool_name} with args: {arguments}")
+        logger.info(f"Executing tool: {tool_name}, action: {action_name} with args: {arguments}")
         
         # 1. ตรวจสอบว่ามี Tool นี้อยู่จริงใน Registry
         if not global_registry.has_tool(tool_name):
@@ -81,11 +82,14 @@ class ExecutionEngine:
         start_time = time.time()
         
         try:
-            # 2. ดึงฟังก์ชัน Tool
-            tool_func = global_registry.get_tool(tool_name)
+            # 2. ดึงฟังก์ชัน Action จาก Tool (หรือใช้ function หลักถ้าไม่มี action)
+            try:
+                tool_func = global_registry.get_action(tool_name, action_name)
+            except KeyError:
+                # Fallback: ถ้าไม่เจอ action ให้ลองใช้ชื่อ tool เป็น action
+                tool_func = global_registry.get_tool(tool_name)
             
             # 3. เรียกใช้ฟังก์ชัน (พร้อม Timeout แบบง่าย)
-            # หมายเหตุ: ใน Production จริงควรใช้ multiprocessing หรือ asyncio สำหรับ timeout ที่แม่นยำ
             result = tool_func(**arguments)
             
             elapsed_ms = (time.time() - start_time) * 1000

@@ -203,6 +203,28 @@ class PerceptionEngine:
         
         Deterministic: Same input_text always returns same Task.
         """
+        # Step 0: Check for algebraic equations FIRST (before intent matching)
+        # Pattern: contains letters (variables), numbers, operators, and equals sign
+        has_variable = bool(re.search(r'[a-zA-Z]', input_text))
+        has_equals = '=' in input_text
+        has_math_ops = bool(re.search(r'[\+\-\*/\^]|\*\*', input_text))
+        
+        if has_variable and has_equals and has_math_ops:
+            # This is an algebraic equation to solve
+            equation_normalized = input_text.replace('^', '**')
+            return Task(
+                task_type='algebraic_equation',
+                intent_id='math_solve_equation',
+                confidence=0.95,
+                parameters={
+                    'equation': equation_normalized,
+                    'raw_equation': input_text,
+                    'equation_type': 'algebraic'
+                },
+                constraints={'requires_symbolic_solver': True},
+                language=self._detect_language(input_text)
+            )
+        
         # Step 1: Detect language
         language = self._detect_language(input_text)
         
@@ -341,21 +363,42 @@ class PerceptionEngine:
         
         # Extract numbers for calculation intents
         if 'math' in intent_id or 'arithmetic' in intent_id:
-            numbers = re.findall(r'\d+\.?\d*', input_text)
-            if len(numbers) >= 2:
-                params['numbers'] = [float(n) for n in numbers]
+            # Check if this is an equation with variables (e.g., "2**x = x**6" or "2^x = x^6")
+            has_variable = bool(re.search(r'[a-zA-Z]', input_text))
+            has_equals = '=' in input_text
             
-            # Detect operator
-            if '+' in input_text or 'plus' in input_text.lower() or 'บวก' in input_text:
-                params['operator'] = '+'
-            elif '-' in input_text or 'minus' in input_text.lower() or 'ลบ' in input_text:
-                params['operator'] = '-'
-            elif '*' in input_text or 'times' in input_text.lower() or 'คูณ' in input_text:
-                params['operator'] = '*'
-            elif '/' in input_text or 'divide' in input_text.lower() or 'หาร' in input_text:
-                params['operator'] = '/'
-            
-            constraints['requires_float_tolerance'] = True
+            if has_variable and has_equals:
+                # This is an equation to solve, not simple arithmetic
+                params['equation_type'] = 'algebraic'
+                params['raw_equation'] = input_text
+                # Convert ^ to ** for Python syntax
+                equation_normalized = input_text.replace('^', '**')
+                params['equation'] = equation_normalized
+                constraints['requires_symbolic_solver'] = True
+            else:
+                # Simple arithmetic - extract numbers
+                numbers = re.findall(r'\d+\.?\d*', input_text)
+                if len(numbers) >= 2:
+                    params['numbers'] = [float(n) for n in numbers]
+                
+                # Detect operator
+                if '+' in input_text or 'plus' in input_text.lower() or 'บวก' in input_text:
+                    params['operator'] = '+'
+                elif '-' in input_text or 'minus' in input_text.lower() or 'ลบ' in input_text:
+                    params['operator'] = '-'
+                elif '*' in input_text or 'times' in input_text.lower() or 'คูณ' in input_text:
+                    params['operator'] = '*'
+                elif '/' in input_text or 'divide' in input_text.lower() or 'หาร' in input_text:
+                    params['operator'] = '/'
+                
+                constraints['requires_float_tolerance'] = True
+        
+        # Fallback for legacy pattern matching results
+        if 'num1' in params or 'numbers' not in params:
+            if 'num1' in params and 'num2' in params:
+                params['numbers'] = [params['num1'], params['num2']]
+                if 'operator' not in params:
+                    params['operator'] = params.get('operator', '+')
         
         # Extract amount for payment/finance intents
         if 'payment' in intent_id or 'money' in intent_id:

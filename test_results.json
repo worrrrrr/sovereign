@@ -1,73 +1,63 @@
 {
-  "timestamp": "2026-05-26T16:42:38.190751",
+  "timestamp": "2026-05-26T21:24:49.206344",
   "summary": {
     "total_tests": 37,
-    "passed": 23,
-    "failed": 14,
-    "real_failures": 14,
+    "passed": 28,
+    "failed": 9,
+    "real_failures": 9,
     "undefined_intents_in_taxonomy": 0,
-    "success_rate_percent": 62.16
+    "success_rate_percent": 75.68
   },
   "details": [
     {
       "test_name": "Math_Basic_Addition_TH",
       "input": "5 + 3 เท่ากับเท่าไหร่",
       "expected": "math_arithmetic_basic",
-      "actual": "UNKNOWN",
-      "confidence": 0.0,
-      "passed": false,
-      "error": "Expected math_arithmetic_basic, got UNKNOWN (Conf: 0.00)",
-      "parameters": {
-        "original_text": "5 + 3 เท่ากับเท่าไหร่"
-      }
+      "actual": "math_arithmetic_basic",
+      "confidence": 0.7142857142857143,
+      "passed": true,
+      "error": "",
+      "parameters": {}
     },
     {
       "test_name": "Math_Basic_Subtraction_TH",
       "input": "9.8 - 9.11 ได้เท่าไร",
       "expected": "math_arithmetic_basic",
-      "actual": "UNKNOWN",
-      "confidence": 0.0,
-      "passed": false,
-      "error": "Expected math_arithmetic_basic, got UNKNOWN (Conf: 0.00)",
-      "parameters": {
-        "original_text": "9.8 - 9.11 ได้เท่าไร"
-      }
+      "actual": "math_arithmetic_basic",
+      "confidence": 0.45,
+      "passed": true,
+      "error": "",
+      "parameters": {}
     },
     {
       "test_name": "Math_Basic_Multiplication_TH",
       "input": "คำนวณ 12 คูณ 5",
       "expected": "math_arithmetic_basic",
-      "actual": "UNKNOWN",
-      "confidence": 0.0,
-      "passed": false,
-      "error": "Expected math_arithmetic_basic, got UNKNOWN (Conf: 0.00)",
-      "parameters": {
-        "original_text": "คำนวณ 12 คูณ 5"
-      }
+      "actual": "math_arithmetic_basic",
+      "confidence": 0.35714285714285715,
+      "passed": true,
+      "error": "",
+      "parameters": {}
     },
     {
       "test_name": "Math_Basic_Division_TH",
       "input": "100 หาร 4",
       "expected": "math_arithmetic_basic",
-      "actual": "UNKNOWN",
-      "confidence": 0.0,
-      "passed": false,
-      "error": "Expected math_arithmetic_basic, got UNKNOWN (Conf: 0.00)",
-      "parameters": {
-        "original_text": "100 หาร 4"
-      }
+      "actual": "math_arithmetic_basic",
+      "confidence": 0.3333333333333333,
+      "passed": true,
+      "error": "",
+      "parameters": {}
     },
     {
       "test_name": "Math_Decimal_Precision",
       "input": "0.1 + 0.2 ได้เท่าไหร่",
       "expected": "math_arithmetic_basic",
-      "actual": "UNKNOWN",
-      "confidence": 0.0,
-      "passed": false,
-      "error": "Expected math_arithmetic_basic, got UNKNOWN (Conf: 0.00)",
-      "parameters": {
-        "original_text": "0.1 + 0.2 ได้เท่าไหร่"
-      }
+      "actual": "math_arithmetic_basic",
+      "confidence": 0.5238095238095238,
+      "passed": true,
+      "error": "",
+      "parameters": {}
     },
     {
       "test_name": "Math_Negative_Numbers",
@@ -387,13 +377,11 @@
       "test_name": "Fact_Query",
       "input": "เมืองหลวงของไทยคือที่ไหน",
       "expected": "KNOWLEDGE_FACT_QUERY",
-      "actual": "UNKNOWN",
-      "confidence": 0.0,
+      "actual": "knowledge_factual_query",
+      "confidence": 0.375,
       "passed": true,
-      "error": "Intent 'KNOWLEDGE_FACT_QUERY' not defined in taxonomy yet (Expected behavior)",
-      "parameters": {
-        "original_text": "เมืองหลวงของไทยคือที่ไหน"
-      }
+      "error": "",
+      "parameters": {}
     },
     {
       "test_name": "Joke_Request",
