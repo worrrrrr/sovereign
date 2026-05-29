@@ -117,10 +117,26 @@ class PlannerEngine:
         if task.task_type == 'arithmetic':
             # Try to get numbers from different possible keys
             numbers = params.get('numbers', [])
+            
+            # Check nested 'params' key (from IntentParser)
+            if not numbers and 'params' in params:
+                nested_params = params['params']
+                if 'num1' in nested_params and 'num2' in nested_params:
+                    numbers = [nested_params['num1'], nested_params['num2']]
+                    operator = nested_params.get('operator', '+')
+                elif 'numbers' in nested_params:
+                    numbers = nested_params['numbers']
+                    operator = nested_params.get('operator', '+')
+            
+            # Fallback to direct num1/num2 in params
             if not numbers and 'num1' in params and 'num2' in params:
                 numbers = [params['num1'], params['num2']]
             
-            operator = params.get('operator', '+')
+            # Get operator (try nested first, then direct)
+            if 'params' in params and 'operator' in params['params']:
+                operator = params['params']['operator']
+            else:
+                operator = params.get('operator', '+')
             
             if len(numbers) < 2:
                 return ExecutionPlan(
@@ -159,6 +175,81 @@ class PlannerEngine:
                 task_type=task.task_type,
                 intent_id=task.intent_id,
                 metadata={'response_type': 'greeting'}
+            )
+        
+        # Handle social/emotional responses (no tool needed, just response generation)
+        if task.task_type == 'social_response':
+            return ExecutionPlan(
+                is_valid=True,
+                steps=[],
+                task_type=task.task_type,
+                intent_id=task.intent_id,
+                metadata={'response_type': 'social', 'intent_type': params.get('intent_type')}
+            )
+        
+        # Handle system test/noise (acknowledge and move on)
+        if task.task_type == 'system_test':
+            return ExecutionPlan(
+                is_valid=True,
+                steps=[],
+                task_type=task.task_type,
+                intent_id=task.intent_id,
+                metadata={'response_type': 'system_ack'}
+            )
+        
+        # Handle command execution (route to appropriate tool based on core_action)
+        if task.task_type == 'command_execution':
+            core_action = params.get('core_action')
+            if core_action:
+                # Map core actions to tools (future enhancement)
+                return ExecutionPlan(
+                    is_valid=False,
+                    error_message=f"Command action '{core_action}' not yet implemented",
+                    task_type=task.task_type,
+                    intent_id=task.intent_id
+                )
+            else:
+                return ExecutionPlan(
+                    is_valid=False,
+                    error_message="No core action specified for command",
+                    task_type=task.task_type,
+                    intent_id=task.intent_id
+                )
+        
+        # Handle knowledge queries (future: route to knowledge base)
+        if task.task_type == 'knowledge_query':
+            return ExecutionPlan(
+                is_valid=False,
+                error_message=f"Knowledge query not yet implemented for intent: {task.intent_id}",
+                task_type=task.task_type,
+                intent_id=task.intent_id
+            )
+        
+        # Handle logic reasoning / syllogism (e.g., "All X are Y, A is X, is A Y?")
+        if task.task_type == 'logic_proof':
+            premises = params.get('premises', [])
+            conclusion = params.get('conclusion', '')
+            if not premises:
+                return ExecutionPlan(
+                    is_valid=False,
+                    error_message="No premises provided for logic reasoning",
+                    task_type=task.task_type,
+                    intent_id=task.intent_id
+                )
+            
+            return ExecutionPlan(
+                is_valid=True,
+                steps=[
+                    PlanStep(
+                        tool_name='symbolic_reasoner',
+                        action='evaluate_syllogism',
+                        parameters={'premises': premises, 'conclusion': conclusion},
+                        description=f"Evaluate logic: {premises} => {conclusion}"
+                    )
+                ],
+                task_type=task.task_type,
+                intent_id=task.intent_id,
+                metadata={'reasoning_type': 'syllogism'}
             )
         
         # Default fallback

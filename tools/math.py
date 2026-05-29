@@ -23,7 +23,7 @@ def add(a: float, b: float) -> float:
     return a + b
 
 
-def subtract(a: float, b: float) -> float:
+def subtract(a: float, b: float, verbose: bool = False) -> Dict[str, Any]:
     """
     Subtract b from a.
     
@@ -32,15 +32,36 @@ def subtract(a: float, b: float) -> float:
     Args:
         a: Minuend
         b: Subtrahend
-    
+        verbose: If True, return detailed steps
+        
     Returns:
-        Difference (a - b)
+        Dictionary with result and optionally steps
     """
     # Use Decimal for precise calculation
     a_dec = Decimal(str(a))
     b_dec = Decimal(str(b))
     result = a_dec - b_dec
-    return float(result)
+    result_float = float(result)
+    
+    if verbose:
+        return {
+            'operation': 'subtract',
+            'input_a': a,
+            'input_b': b,
+            'result': result_float,
+            'steps': [
+                f"จัดหลักทศนิยม: {a} และ {b}",
+                f"คำนวณ: {a} - {b}",
+                f"ผลลัพธ์: {result_float}"
+            ]
+        }
+    
+    return {
+        'operation': 'subtract',
+        'input_a': a,
+        'input_b': b,
+        'result': result_float
+    }
 
 
 def multiply(a: float, b: float) -> float:
