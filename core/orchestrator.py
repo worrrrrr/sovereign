@@ -128,9 +128,24 @@ class Orchestrator:
         """
         output = result.output
         
+        # ดึง metadata จาก plan (ถ้ามี)
+        intent_type = task.parameters.get('intent_type', '') if task.parameters else ''
+        
         # กรณี Greeting (ไม่มี output จาก tool)
         if task.intent_id == "greeting_hello":
             return "สวัสดีครับ! มีอะไรให้ผมช่วยวันนี้บอกได้เลยนะครับ 😊"
+        
+        # กรณี Social/Emotional responses (แสดงความรู้สึก, บ่น, สับสน, ประชด)
+        if task.intent_id.startswith('emotion_') or intent_type in ['express_feeling', 'vent_complain', 'express_confusion', 'sarcasm_passive']:
+            return self._generate_empathy_response(intent_type, task.parameters.get('original_input', ''))
+        
+        # กรณี System test/noise
+        if task.intent_id == 'system_test_noise' or intent_type == 'test_noise':
+            return "✅ ระบบพร้อมใช้งานครับ มีอะไรให้ช่วยบอกได้เลยนะครับ"
+        
+        # กรณี Social responses (ขอบคุณ, อำลา, ขอโทษ, หัวเราะ, ยืนยัน, ปฏิเสธ)
+        if task.intent_id in ['social_thank_you', 'farewell_goodbye', 'social_apologize', 'social_laugh', 'response_acknowledge', 'response_reject']:
+            return self._generate_social_response(task.intent_id)
         
         # กรณีคำนวณเลข
         if task.intent_id == "math_arithmetic_basic":
@@ -192,6 +207,78 @@ class Orchestrator:
         
         # Fallback: แสดงผลลัพธ์ดิบ
         return f"ผลลัพธ์: {output}"
+    
+    def _generate_empathy_response(self, intent_type: str, original_input: str) -> str:
+        """
+        สร้างคำตอบแสดงความเห็นอกเห็นใจตามประเภทอารมณ์
+        """
+        empathy_responses = {
+            'express_feeling': [
+                "เข้าใจเลยครับ that's completely normal to feel that way.",
+                "ขอบคุณที่แบ่งปันความรู้สึกนะครับ ผมรับฟังเสมอครับ",
+                "ความรู้สึกของคุณสำคัญนะครับ มีอะไรให้ช่วยบอกได้เลยครับ"
+            ],
+            'vent_complain': [
+                "เข้าใจเลยครับว่าทำไมถึงรู้สึกแบบนั้น บางทีชีวิตก็มีเรื่องเหนื่อยจริงๆ",
+                "ฟังดูว่าคุณผ่านเรื่องหนักมาเยอะเลยนะครับ อยากเล่าเพิ่มไหมครับ?",
+                "ผมเข้าใจเลยครับ บางครั้งการได้ระบายออกมาก็ช่วยให้สบายขึ้นนะครับ"
+            ],
+            'express_confusion': [
+                "ไม่ต้องกังวลครับ ถ้าไม่เข้าใจตรงไหนถามผมได้เลยนะครับ",
+                "เรื่องนี้มันซับซ้อนจริงๆ ครับ ลองอธิบายให้ฟังอีกทีไหมครับ?",
+                "ไม่เป็นไรครับ เราค่อยๆ มาทำความเข้าใจไปด้วยกันนะครับ"
+            ],
+            'sarcasm_passive': [
+                "ผมเข้าใจนะครับว่าอาจมีอะไรที่ไม่เป็นอย่างหวัง 😊",
+                "บางครั้งสิ่งที่ดีที่สุดคือการหัวเราะให้กับสถานการณ์นะครับ",
+                "ผมอยู่ข้างๆ คุณนะครับ มีอะไรให้ช่วยบอกได้เลยครับ"
+            ]
+        }
+        
+        import random
+        responses = empathy_responses.get(intent_type, ["ผมเข้าใจครับ มีอะไรให้ช่วยบอกได้เลยนะครับ"])
+        return random.choice(responses)
+    
+    def _generate_social_response(self, intent_id: str) -> str:
+        """
+        สร้างคำตอบตอบสนองทางสังคม (ขอบคุณ, อำลา, ขอโทษ, ฯลฯ)
+        """
+        social_responses = {
+            'social_thank_you': [
+                "ยินดีมากครับ! 😊",
+                "ไม่เป็นไรครับ ยินดีที่ได้ช่วยเสมอครับ",
+                "ขอบคุณครับที่ไว้ใจให้ผมช่วยนะครับ"
+            ],
+            'farewell_goodbye': [
+                "ลาก่อนครับ! ไว้เจอกันใหม่นะครับ 👋",
+                "โชคดีนะครับ แล้วเจอกันใหม่ครับ!",
+                "บ๊ายบายครับ ดูแลตัวเองด้วยนะครับ"
+            ],
+            'social_apologize': [
+                "ไม่เป็นไรครับ ไม่ต้องกังวลนะครับ 😊",
+                "ไม่มีปัญหาครับ ทุกคนทำผิดพลาดได้ครับ",
+                "โอเคครับ ไม่ถือสาหรอกนะครับ"
+            ],
+            'social_laugh': [
+                "555 ขำด้วยคนครับ! 😄",
+                "ตลกจังครับ ฮ่าๆๆ",
+                "มีความสุขจังเลยครับ ที่เห็นคุณขำก็ทำให้ผม vui ล่ะครับ"
+            ],
+            'response_acknowledge': [
+                "เยี่ยมเลยครับ! 👍",
+                "เข้าใจตรงกันแล้วนะครับ",
+                "โอเคครับ พร้อมดำเนินการต่อเลยครับ"
+            ],
+            'response_reject': [
+                "โอเคครับ ไม่เป็นไรนะครับ",
+                "เข้าใจครับ ถ้าเปลี่ยนใจเมื่อไหร่บอกได้เลยนะครับ",
+                "ได้ครับ ไม่มีปัญหาครับ"
+            ]
+        }
+        
+        import random
+        responses = social_responses.get(intent_id, ["ขอบคุณครับที่พูดคุยกับผมครับ"])
+        return random.choice(responses)
 
 # Singleton instance สำหรับใช้งานทั่วระบบ
 _global_orchestrator: Optional[Orchestrator] = None

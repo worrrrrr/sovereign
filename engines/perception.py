@@ -228,7 +228,46 @@ class PerceptionEngine:
         # Step 1: Detect language
         language = self._detect_language(input_text)
         
-        # Step 2: Try intent-based matching first
+        # Step 2: Use IntentParser from core for comprehensive intent detection
+        try:
+            from core.intent_parser import IntentParser, IntentType
+            
+            parser = IntentParser()
+            parsed = parser.parse(input_text)
+            
+            # Map IntentType to task_type and intent_id
+            intent_type = parsed.intent_type
+            intent_id = self._map_intent_type_to_id(intent_type)
+            task_type = self._map_intent_type_to_task_type(intent_type, input_text)
+            
+            # Build parameters from parsed result
+            params = {
+                'original_input': input_text,
+                'intent_type': intent_type.value,
+                'core_action': parsed.core_action.value if parsed.core_action else None,
+                'entities': parsed.entities,
+                'params': parsed.params,
+                'confidence': parsed.confidence,
+                'reasoning': parsed.reasoning
+            }
+            
+            constraints = {'intent_based': True}
+            
+            # Set confidence threshold
+            if parsed.confidence >= 0.45:
+                return Task(
+                    task_type=task_type,
+                    intent_id=intent_id,
+                    confidence=parsed.confidence,
+                    parameters=params,
+                    constraints=constraints,
+                    language=language
+                )
+        except Exception as e:
+            # Fallback to legacy method if IntentParser fails
+            pass
+        
+        # Step 3: Try intent-based matching from taxonomy
         best_match = self._match_intents(input_text)
         
         if best_match and best_match['confidence'] >= 0.45:  # Low threshold
@@ -252,7 +291,7 @@ class PerceptionEngine:
                 language=language
             )
         
-        # Step 3: Fallback to legacy pattern matching
+        # Step 4: Fallback to legacy pattern matching
         for task_type, pattern_list in self.legacy_patterns.items():
             for pattern, parser in pattern_list:
                 match = re.search(pattern, input_text, re.IGNORECASE)
@@ -267,8 +306,120 @@ class PerceptionEngine:
                         language=language
                     )
         
-        # Step 4: Default fallback - classify by content analysis
+        # Step 5: Default fallback - classify by content analysis
         return self._fallback_classification(input_text, language)
+    
+    def _map_intent_type_to_id(self, intent_type: 'IntentType') -> str:
+        """Map IntentType enum to intent_id string."""
+        # Import IntentType locally to avoid circular dependency
+        from core.intent_parser import IntentType
+        
+        mapping = {
+            # Math & Logic
+            IntentType.CALCULATION: 'math_arithmetic_basic',
+            IntentType.SOLVE_EQUATION: 'math_solve_equation',
+            IntentType.SOLVE_CONSTRAINT: 'math_solve_constraint',
+            IntentType.SOLVE_FUNCTIONAL: 'math_solve_functional',
+            
+            # Social & Communication
+            IntentType.GREETING: 'greeting_hello',
+            IntentType.FAREWELL: 'farewell_goodbye',
+            IntentType.THANK: 'social_thank_you',
+            IntentType.APOLOGIZE: 'social_apologize',
+            IntentType.LAUGH: 'social_laugh',
+            IntentType.ACKNOWLEDGE: 'response_acknowledge',
+            IntentType.REJECT: 'response_reject',
+            
+            # Emotions & Feelings
+            IntentType.EXPRESS_FEELING: 'emotion_express_feeling',
+            IntentType.VENT_COMPLAIN: 'emotion_vent_complain',
+            IntentType.EXPRESS_CONFUSION: 'emotion_confusion',
+            IntentType.SARCASM_PASSIVE: 'emotion_sarcasm',
+            
+            # Commands & Actions
+            IntentType.COMMAND: 'command_general',
+            IntentType.REQUEST_HELP: 'command_request_help',
+            
+            # Information & Questions
+            IntentType.ASK_INFO: 'inquiry_general',
+            IntentType.ANSWER: 'response_answer',
+            IntentType.EXPLAIN: 'inquiry_explain',
+            IntentType.ASK_OPINION: 'inquiry_ask_opinion',
+            IntentType.EXPRESS_OPINION: 'response_express_opinion',
+            IntentType.HYPOTHETICAL: 'inquiry_hypothetical',
+            IntentType.ASK_COMPARISON: 'inquiry_comparison',
+            
+            # Advice & Warnings
+            IntentType.ADVISE: 'advice_give',
+            IntentType.WARN: 'warning_give',
+            
+            # Social Interaction
+            IntentType.INVITE: 'social_invite',
+            IntentType.PROMISE: 'social_promise',
+            IntentType.ASK_PERMISSION: 'social_permission',
+            
+            # Noise & Testing
+            IntentType.TEST_NOISE: 'system_test_noise',
+            
+            # Search
+            IntentType.SEARCH_WEB: 'search_web',
+            
+            # Unknown
+            IntentType.UNKNOWN: 'unknown',
+        }
+        return mapping.get(intent_type, 'unknown')
+    
+    def _map_intent_type_to_task_type(self, intent_type: 'IntentType', input_text: str) -> str:
+        """Map IntentType to task_type for execution routing."""
+        # Import IntentType locally to avoid circular dependency
+        from core.intent_parser import IntentType
+        
+        # Math tasks
+        if intent_type in [IntentType.CALCULATION, IntentType.SOLVE_EQUATION, 
+                          IntentType.SOLVE_CONSTRAINT, IntentType.SOLVE_FUNCTIONAL]:
+            return 'arithmetic'
+        
+        # Social/Emotional tasks (need response generator)
+        if intent_type in [IntentType.GREETING, IntentType.FAREWELL, IntentType.THANK,
+                          IntentType.APOLOGIZE, IntentType.LAUGH, IntentType.ACKNOWLEDGE,
+                          IntentType.EXPRESS_FEELING, IntentType.VENT_COMPLAIN,
+                          IntentType.EXPRESS_CONFUSION, IntentType.SARCASM_PASSIVE]:
+            return 'social_response'
+        
+        # Commands (need tool execution)
+        if intent_type in [IntentType.COMMAND, IntentType.REQUEST_HELP]:
+            return 'command_execution'
+        
+        # Questions/Inquiries (need knowledge base)
+        if intent_type in [IntentType.ASK_INFO, IntentType.EXPLAIN, IntentType.ASK_OPINION,
+                          IntentType.HYPOTHETICAL, IntentType.ASK_COMPARISON]:
+            # Check if this is a logic/syllogism question
+            text_lower = input_text.lower()
+            if any(word in text_lower for word in ['ทุกคน', 'ทั้งหมด', 'ทุกตัว', 'always', 'all ', 'every ']) and \
+               any(word in text_lower for word in ['ไหม', 'หรือไม่', 'จริงไหม', 'ถูกต้องไหม', '?', 'whether', 'is it true']):
+                return 'logic_proof'
+            return 'knowledge_query'
+        
+        # Responses
+        if intent_type in [IntentType.ANSWER, IntentType.EXPRESS_OPINION, IntentType.REJECT]:
+            return 'response_handling'
+        
+        # Advice/Warnings
+        if intent_type in [IntentType.ADVISE, IntentType.WARN]:
+            return 'advice_handling'
+        
+        # Social interactions
+        if intent_type in [IntentType.INVITE, IntentType.PROMISE, IntentType.ASK_PERMISSION]:
+            return 'social_interaction'
+        
+        # System
+        if intent_type == IntentType.TEST_NOISE:
+            return 'system_test'
+        
+        if intent_type == IntentType.SEARCH_WEB:
+            return 'web_search'
+        
+        return 'unknown'
     
     def _detect_language(self, text: str) -> str:
         """Detect language of input text."""
