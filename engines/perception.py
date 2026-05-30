@@ -364,6 +364,9 @@ class PerceptionEngine:
             # Search
             IntentType.SEARCH_WEB: 'search_web',
             
+            # Entertainment
+            IntentType.TELL_JOKE: 'entertainment_joke',
+            
             # Unknown
             IntentType.UNKNOWN: 'unknown',
         }
@@ -418,6 +421,10 @@ class PerceptionEngine:
         
         if intent_type == IntentType.SEARCH_WEB:
             return 'web_search'
+        
+        # Entertainment
+        if intent_type == IntentType.TELL_JOKE:
+            return 'entertainment'
         
         return 'unknown'
     

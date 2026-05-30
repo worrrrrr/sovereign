@@ -1,0 +1,73 @@
+{
+  "facts": [
+    {
+      "id": "US_PRESIDENT_2025",
+      "category": "POLITICS",
+      "question_pattern": "(ใครคือ|ประธานาธิบดี|president).*(สหรัฐอเมริกา|us|america)",
+      "answer": "ปัจจุบัน (มกราคม 2025) ประธานาธิบดีสหรัฐอเมริกาคือ โดนัลด์ ทรัมป์ (Donald Trump) ดำรงตำแหน่งลำดับที่ 47",
+      "source": "US Official Election Commission & Inauguration Record",
+      "valid_from": "2025-01-20T12:00:00",
+      "valid_until": "2029-01-20T12:00:00",
+      "confidence": 0.99,
+      "metadata": {
+        "term": "47th",
+        "party": "Republican"
+      }
+    },
+    {
+      "id": "US_PRESIDENT_2024",
+      "category": "POLITICS",
+      "question_pattern": "(ใครคือ|ประธานาธิบดี|president).*(สหรัฐอเมริกา|us|america)",
+      "answer": "ในช่วงปี 2021-2025 ประธานาธิบดีสหรัฐอเมริกาคือ โจ ไบเดน (Joe Biden)",
+      "source": "US Official Record",
+      "valid_from": "2021-01-20T12:00:00",
+      "valid_until": "2025-01-20T11:59:59",
+      "confidence": 0.99,
+      "metadata": {
+        "term": "46th",
+        "party": "Democratic",
+        "status": "historical"
+      }
+    },
+    {
+      "id": "THAI_CAPITAL",
+      "category": "GEOGRAPHY",
+      "question_pattern": "(เมืองหลวง|capital).*(ไทย|thailand)",
+      "answer": "เมืองหลวงของประเทศไทยคือ กรุงเทพมหานคร (Bangkok)",
+      "source": "Royal Thai Government Gazette",
+      "valid_from": "1782-04-21T00:00:00",
+      "valid_until": null,
+      "confidence": 1.0,
+      "metadata": {
+        "established": 1782
+      }
+    },
+    {
+      "id": "BANGKOK_POPULATION",
+      "category": "GEOGRAPHY",
+      "question_pattern": "(กรุงเทพ|bangkok).*(ประชากร|population)",
+      "answer": "กรุงเทพมหานครมีประชากรประมาณ 5.5 - 10.7 ล้านคน (ขึ้นอยู่กับเกณฑ์การนับรวมปริมณฑล)",
+      "source": "Department of Provincial Administration, Thailand (2024)",
+      "valid_from": "2024-01-01T00:00:00",
+      "valid_until": null,
+      "confidence": 0.95,
+      "metadata": {
+        "year": 2024,
+        "metro_population": "10.7 million"
+      }
+    },
+    {
+      "id": "MATH_PI",
+      "category": "SCIENCE",
+      "question_pattern": "(ค่าพาย|pi|π).*(คืออะไร|value)",
+      "answer": "ค่าพาย (π) คืออัตราส่วนของเส้นรอบวงต่อเส้นผ่านศูนย์กลางของวงกลม มีค่าประมาณ 3.14159...",
+      "source": "Mathematical Constant",
+      "valid_from": "0001-01-01T00:00:00",
+      "valid_until": null,
+      "confidence": 1.0,
+      "metadata": {
+        "type": "irrational"
+      }
+    }
+  ]
+}

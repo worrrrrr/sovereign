@@ -49,6 +49,7 @@ class Orchestrator:
             # Import tools เพื่อลงทะเบียน (ต้อง import math ก่อน core_tools เพราะ core_tools ใช้ registry)
             from tools import math  # noqa: F401
             from tools import core_tools  # noqa: F401
+            from tools import knowledge_tool  # noqa: F401
             
             logger.info("Sovereign AI Orchestrator initialized successfully.")
             

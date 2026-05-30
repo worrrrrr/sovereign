@@ -65,13 +65,17 @@ def solve_equation_z3(equation_str: str, verbose: bool = False) -> Dict[str, Any
         # เราจะลอง eval ดูก่อน ถ้าไม่ได้ค่อย fallback
         
         try:
-            lhs_expr = eval(lhs_str, {"__builtins__": {}}, local_dict)
-            rhs_expr = eval(rhs_str, {"__builtins__": {}}, local_dict)
+            # ใช้ ast.literal_eval หรือ sympy แทน eval เพื่อความปลอดภัย
+            from sympy.parsing.sympy_parser import parse_expr, standard_transformations, implicit_multiplication_application, convert_xor
+            transformations = standard_transformations + (implicit_multiplication_application, convert_xor)
+            
+            lhs_expr = parse_expr(lhs_str, transformations=transformations, local_dict=local_dict)
+            rhs_expr = parse_expr(rhs_str, transformations=transformations, local_dict=local_dict)
         except Exception as e:
-            # ถ้า eval ล้มเหลว อาจเป็นเพราะฟังก์ชันที่ไม่รองรับ หรือ syntax
+            # ถ้า parsing ล้มเหลว อาจเป็นเพราะฟังก์ชันที่ไม่รองรับ หรือ syntax
             # ลอง fallback ไปใช้ numerical method ทันที
             if verbose:
-                result["steps"].append(f"**Z3 eval ล้มเหลว: {str(e)}**")
+                result["steps"].append(f"**SymPy parsing ล้มเหลว: {str(e)}**")
                 result["steps"].append("**เปลี่ยนไปใช้ Numerical Method ทันที**")
             return solve_equation_numerical(equation_str, verbose)
 
@@ -211,7 +215,11 @@ def solve_equation_numerical(equation_str: str, verbose: bool = False) -> Dict[s
         def f(x_val):
             local_scope = {'x': x_val, 'math': math}
             try:
-                return eval(clean_eq, {"__builtins__": {}}, local_scope)
+                # ใช้ sympy แทน eval เพื่อความปลอดภัย
+                from sympy.parsing.sympy_parser import parse_expr, standard_transformations, implicit_multiplication_application, convert_xor
+                transformations = standard_transformations + (implicit_multiplication_application, convert_xor)
+                expr = parse_expr(clean_eq, transformations=transformations, local_dict=local_scope)
+                return float(expr.evalf())
             except:
                 return None
 

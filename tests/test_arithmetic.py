@@ -20,7 +20,11 @@ class TestFloatingPointTolerance:
         """Test 2: 9.8 - 9.11 == 0.69 with tolerance"""
         from tools.math import subtract
         result = subtract(9.8, 9.11)
-        assert approx(result) == 0.69
+        # subtract returns a dict with 'result' key
+        if isinstance(result, dict):
+            assert approx(result['result']) == 0.69
+        else:
+            assert approx(result) == 0.69
     
     def test_03_sum_01_three_times(self):
         """Test 3: 0.1 + 0.2 + 0.3 == 0.6 with tolerance"""
@@ -42,7 +46,11 @@ class TestFloatingPointTolerance:
         from tools.math import subtract
         # This should be exactly 0.69 with Decimal arithmetic
         result = subtract(9.8, 9.11)
-        assert result == 0.69  # Exact equality due to Decimal
+        # subtract returns a dict with 'result' key
+        if isinstance(result, dict):
+            assert result['result'] == 0.69  # Exact equality due to Decimal
+        else:
+            assert result == 0.69  # Exact equality due to Decimal
 
 
 class TestSafetyAndSecurity:
@@ -100,7 +108,11 @@ class TestDeterministicBehavior:
         results = []
         for _ in range(100):
             result = subtract(9.8, 9.11)
-            results.append(result)
+            # Extract the numeric result from dict if needed
+            if isinstance(result, dict):
+                results.append(result['result'])
+            else:
+                results.append(result)
         
         # All results should be identical
         assert len(set(results)) == 1, "Results were not deterministic"

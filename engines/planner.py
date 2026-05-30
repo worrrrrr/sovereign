@@ -218,11 +218,24 @@ class PlannerEngine:
         
         # Handle knowledge queries (future: route to knowledge base)
         if task.task_type == 'knowledge_query':
+            # For now, return a mock response for general inquiries
+            query_text = params.get('query', params.get('raw_text', ''))
+            # If still empty, use the original_input from parameters
+            if not query_text:
+                query_text = params.get('original_input', 'คำถามทั่วไป')
             return ExecutionPlan(
-                is_valid=False,
-                error_message=f"Knowledge query not yet implemented for intent: {task.intent_id}",
+                is_valid=True,
+                steps=[
+                    PlanStep(
+                        tool_name='knowledge',
+                        action='query_general',
+                        parameters={'query': query_text},
+                        description=f"ตอบคำถามทั่วไป: {query_text}"
+                    )
+                ],
                 task_type=task.task_type,
-                intent_id=task.intent_id
+                intent_id=task.intent_id,
+                metadata={'response_type': 'knowledge_mock'}
             )
         
         # Handle logic reasoning / syllogism (e.g., "All X are Y, A is X, is A Y?")
