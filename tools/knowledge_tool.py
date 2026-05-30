@@ -72,3 +72,20 @@ class KnowledgeLookupTool:
 
 # สร้าง Instance ของเครื่องมือสำหรับนำไปลงทะเบียนใน Registry
 tool_instance = KnowledgeLookupTool()
+
+def query_general(query: str) -> Dict[str, Any]:
+    """Wrapper function for general knowledge queries"""
+    return tool_instance.execute(query)
+
+# Register the tool
+from tools.registry import global_registry
+
+global_registry.register(
+    name="knowledge",
+    func=query_general,
+    description="เครื่องมือตอบคำถามทั่วไปและค้นหาข้อมูล (จำลอง)",
+    category="KNOWLEDGE",
+    actions={
+        "query_general": query_general
+    }
+)

@@ -51,6 +51,10 @@ class IntentType(Enum):
     
     # Search & Web
     SEARCH_WEB = "search_web"
+    
+    # Entertainment
+    TELL_JOKE = "tell_joke"              # เล่ามุกตลก
+    
     UNKNOWN = "unknown"
 
 # ------------------------------------------------------------
@@ -158,6 +162,8 @@ class IntentParser:
             IntentType.HYPOTHETICAL: ['ถ้าเกิด', 'สมมติ', 'ถ้าหาก', 'ในกรณีที่', 'ลองคิดดูว่า', 'จะเกิดอะไรขึ้นถ้า', 'what if', 'suppose'],
             IntentType.ASK_COMPARISON: ['ต่างกันยังไง', 'ต่างกับ', 'เทียบกับ', 'เปรียบเทียบกับ', 'อันไหนดีกว่า', 'เลือกอันไหน', 'ต่างกันไหม', 'เหมือนหรือต่าง'],
             IntentType.SARCASM_PASSIVE: ['ก็เก่งนี่นา', 'ดีมากเลยนะ', 'ฉลาดจัง', 'ทำได้ดีมาก', 'เยี่ยมไปเลย', 'สุดยอด', 'เก่งมาก', 'น่ารักจัง'],
+            # Entertainment
+            IntentType.TELL_JOKE: ['เล่ามุก', 'เรื่องตลก', ' joke', 'ตลก', 'ฮา', 'ขำขัน', 'เล่าเรื่องตลก', 'เล่าเรื่องฮา', 'ทำให้ขำ', 'make me laugh', 'tell me a joke'],
         }
         
         # คำถาม patterns
@@ -350,6 +356,10 @@ class IntentParser:
         # การเปรียบเทียบ (ASK_COMPARISON) - ตรวจสอบก่อน COMMAND และ ASK_INFO
         if any(kw in text_lower for kw in ['ต่างกันยังไง', 'ต่างกับ', 'เทียบกับ', 'เปรียบเทียบกับ', 'อันไหนดีกว่า', 'เลือกอันไหน', 'เหมือนหรือต่าง']):
             return IntentType.ASK_COMPARISON
+        
+        # มุกตลก/เรื่องฮา (TELL_JOKE) - ตรวจสอบก่อน ASK_INFO
+        if any(kw in text_lower for kw in ['เล่ามุก', 'เรื่องตลก', 'ตลก', 'ฮา', 'ขำขัน', 'เล่าเรื่องตลก', 'เล่าเรื่องฮา', 'ทำให้ขำ', 'make me laugh', 'tell me a joke']):
+            return IntentType.TELL_JOKE
         
         # คำถามทั่วไป (ASK_INFO) - ตรวจสอบสุดท้ายเพื่อไม่ให้ overlap
         question_indicators = ['?', 'อะไร', 'อย่างไร', 'ยังไง', 'ไหม', 'หรือ', 'เท่าไหร่', 'ไหน', 'ใคร', 'เมื่อไหร่', 'ทำไม']

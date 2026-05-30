@@ -246,27 +246,42 @@ def solve_equation(equation_str: str) -> Dict[str, Any]:
     Returns:
         Dictionary with solutions, steps, and metadata
     """
+    # Clean the input: Remove non-mathematical text (e.g., Thai instructions like "แสดงวิธีคิด")
+    # Keep only numbers, operators, variables, parentheses, and '='
+    import re
+    # Pattern to keep: digits, letters (variables), operators (+-*/^=), dots, spaces, parentheses
+    cleaned_eq = re.sub(r'[^0-9a-zA-Z+\-*/^=().\s]', '', equation_str)
+    if not cleaned_eq.strip():
+        return {
+            'success': False,
+            'error': 'ไม่พบสมการคณิตศาสตร์ที่ถูกต้องในข้อความที่ป้อนเข้ามา',
+            'raw_input': equation_str
+        }
+    
     # ตรวจสอบว่าเป็นสมการ Diophantine หรือไม่ (มี k^2 หรือโจทย์หาจำนวนเต็ม)
-    if 'k^2' in equation_str or 'integer solution' in equation_str.lower():
+    if 'k^2' in cleaned_eq or 'integer solution' in cleaned_eq.lower():
         # ลองใช้ Z3 ก่อน
-        result = solve_diophantine_z3(equation_str)
+        result = solve_diophantine_z3(cleaned_eq)
         if result['success']:
             return result
         # ถ้า Z3 ไม่สำเร็จ จะ fall back ไป SymPy (แต่อาจได้คำตอบไม่ครบ)
     
     try:
         from sympy import symbols, Eq, solve, sympify, S
-        from sympy.parsing.sympy_parser import parse_expr
+        from sympy.parsing.sympy_parser import parse_expr, standard_transformations, implicit_multiplication_application, convert_xor
         
-        # Parse the equation string
-        if '=' in equation_str:
-            left, right = equation_str.split('=', 1)
-            left_expr = parse_expr(left.strip())
-            right_expr = parse_expr(right.strip())
+        # Define transformations to handle ^ as power and implicit multiplication (e.g., 5x -> 5*x)
+        transformations = standard_transformations + (implicit_multiplication_application, convert_xor)
+        
+        # Parse the equation string (using cleaned version)
+        if '=' in cleaned_eq:
+            left, right = cleaned_eq.split('=', 1)
+            left_expr = parse_expr(left.strip(), transformations=transformations)
+            right_expr = parse_expr(right.strip(), transformations=transformations)
             equation = Eq(left_expr, right_expr)
         else:
             # Assume it's an expression = 0
-            equation = parse_expr(equation_str)
+            equation = parse_expr(cleaned_eq, transformations=transformations)
         
         # Find all symbols in the equation
         symbols_in_eq = equation.free_symbols
@@ -277,7 +292,7 @@ def solve_equation(equation_str: str) -> Dict[str, Any]:
                 'success': True,
                 'solutions': [result_val],
                 'method': 'evaluation',
-                'steps': f"ประเมินค่าโดยตรง: {equation_str} = {result_val}",
+                'steps': f"ประเมินค่าโดยตรง: {cleaned_eq} = {result_val}",
                 'raw_input': equation_str
             }
         
@@ -291,6 +306,7 @@ def solve_equation(equation_str: str) -> Dict[str, Any]:
         processed_solutions = []
         steps = []
         steps.append(f"สมการ: {equation_str}")
+        steps.append(f"สมการที่ประมวลผล: {cleaned_eq}")
         steps.append(f"ตัวแปรที่พบ: {variable}")
         
         for i, sol in enumerate(solutions):

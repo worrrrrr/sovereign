@@ -245,3 +245,61 @@ global_registry.register(
     description="ค้นหาข้อเท็จจริงจากฐานข้อมูลภายในที่มีความน่าเชื่อถือสูง (การเมือง, วิทยาศาสตร์, ภูมิศาสตร์)",
     category="KNOWLEDGE"
 )
+
+# ==============================================================================
+# 6. ENTERTAINMENT TOOLS (เครื่องมือเพื่อความบันเทิง)
+# ==============================================================================
+
+def tell_joke() -> Dict[str, Any]:
+    """
+    เล่ามุกตลกแบบสุ่มจากคลังมุกตลกภาษาไทยและอังกฤษ
+    """
+    jokes_th = [
+        "ทำไมนกกระจอกเทศถึงไม่บิน? ... เพราะมันตัวหนักเกินไปไงครับ! 😄",
+        "อะไรเอ่ย? อยู่บ้านก็โดนจับ... เงินเดือนครับ! 😆",
+        "ปลาอะไรชอบเล่นโซเชียล? ปลาอินเทรนด์! 🐟",
+        "ทำไมหนังสือคณิตศาสตร์ถึงเศร้า? ... เพราะมีปัญหาเยอะเกินไป! 📚",
+        "ช้างอะไรเล็กที่สุด? ... ช้างมั้ง(畅想)! 🐘",
+        "อะไรเอ่ย? วิ่งเร็วแต่ไม่มีขา? ... เวลาครับ! ⏰",
+        "ไก่อะไรตีไม่แตก? ... ไก่อ่อน! 🍗",
+        "ทำไมผีถึงไม่กินเด็กอ้วน? ... เพราะกลัวอ้วนตาม! 👻",
+        "อะไรเอ่ย? ยิ่งตัดยิ่งยาว? ... ถนนครับ! 🛣️",
+        "หมูอะไรบินได้? ... หมูหยอง! 🐷"
+    ]
+    
+    jokes_en = [
+        "Why don't scientists trust atoms? Because they make up everything! 😄",
+        "What do you call a fake noodle? An impasta! 🍝",
+        "Why did the scarecrow win an award? He was outstanding in his field! 🌾",
+        "What do you call a bear with no teeth? A gummy bear! 🐻",
+        "Why can't your nose be 12 inches long? Because then it would be a foot! 👃",
+        "What did the ocean say to the beach? Nothing, it just waved! 🌊",
+        "Why do mathematicians hate parties? Because they have trouble finding x! 🎉",
+        "What do you call cheese that isn't yours? Nacho cheese! 🧀",
+        "Why did the bicycle fall over? Because it was two-tired! 🚲",
+        "What do you call a sleeping dinosaur? A dino-snore! 🦕"
+    ]
+    
+    import random
+    
+    # สุ่มเลือกมุกภาษาไทยหรืออังกฤษ
+    if random.random() < 0.5:
+        joke = random.choice(jokes_th)
+        language = "th"
+    else:
+        joke = random.choice(jokes_en)
+        language = "en"
+    
+    return {
+        "success": True,
+        "joke": joke,
+        "language": language,
+        "category": "entertainment"
+    }
+
+global_registry.register(
+    name="tell_joke",
+    func=tell_joke,
+    description="เล่ามุกตลกแบบสุ่ม (ภาษาไทยและอังกฤษ)",
+    category="ENTERTAINMENT"
+)
