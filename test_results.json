@@ -1,12 +1,12 @@
 {
-  "timestamp": "2026-05-26T21:24:49.206344",
+  "timestamp": "2026-05-30T08:35:42.012761",
   "summary": {
     "total_tests": 37,
-    "passed": 28,
-    "failed": 9,
-    "real_failures": 9,
+    "passed": 37,
+    "failed": 0,
+    "real_failures": 0,
     "undefined_intents_in_taxonomy": 0,
-    "success_rate_percent": 75.68
+    "success_rate_percent": 100.0
   },
   "details": [
     {
@@ -14,7 +14,7 @@
       "input": "5 + 3 เท่ากับเท่าไหร่",
       "expected": "math_arithmetic_basic",
       "actual": "math_arithmetic_basic",
-      "confidence": 0.7142857142857143,
+      "confidence": 0.75,
       "passed": true,
       "error": "",
       "parameters": {}
@@ -24,7 +24,7 @@
       "input": "9.8 - 9.11 ได้เท่าไร",
       "expected": "math_arithmetic_basic",
       "actual": "math_arithmetic_basic",
-      "confidence": 0.45,
+      "confidence": 0.75,
       "passed": true,
       "error": "",
       "parameters": {}
@@ -54,7 +54,7 @@
       "input": "0.1 + 0.2 ได้เท่าไหร่",
       "expected": "math_arithmetic_basic",
       "actual": "math_arithmetic_basic",
-      "confidence": 0.5238095238095238,
+      "confidence": 0.75,
       "passed": true,
       "error": "",
       "parameters": {}
@@ -63,20 +63,18 @@
       "test_name": "Math_Negative_Numbers",
       "input": "-5 + 10 =",
       "expected": "math_arithmetic_basic",
-      "actual": "UNKNOWN",
-      "confidence": 0.0,
-      "passed": false,
-      "error": "Expected math_arithmetic_basic, got UNKNOWN (Conf: 0.00)",
-      "parameters": {
-        "original_text": "-5 + 10 ="
-      }
+      "actual": "math_arithmetic_basic",
+      "confidence": 0.75,
+      "passed": true,
+      "error": "",
+      "parameters": {}
     },
     {
       "test_name": "Math_English_Query",
       "input": "Calculate 25 * 4",
       "expected": "math_arithmetic_basic",
       "actual": "math_arithmetic_basic",
-      "confidence": 0.5625,
+      "confidence": 0.75,
       "passed": true,
       "error": "",
       "parameters": {}
@@ -85,13 +83,11 @@
       "test_name": "Math_Mixed_Lang",
       "input": "หาผลบวกของ 10 และ 20",
       "expected": "math_arithmetic_basic",
-      "actual": "UNKNOWN",
-      "confidence": 0.0,
-      "passed": false,
-      "error": "Expected math_arithmetic_basic, got UNKNOWN (Conf: 0.00)",
-      "parameters": {
-        "original_text": "หาผลบวกของ 10 และ 20"
-      }
+      "actual": "math_arithmetic_basic",
+      "confidence": 0.35,
+      "passed": true,
+      "error": "",
+      "parameters": {}
     },
     {
       "test_name": "Finance_Coin_Suggestion",
@@ -145,25 +141,21 @@
       "test_name": "Greet_Thai_Formal",
       "input": "สวัสดีครับ",
       "expected": "greeting_hello",
-      "actual": "UNKNOWN",
-      "confidence": 0.0,
-      "passed": false,
-      "error": "Expected greeting_hello, got UNKNOWN (Conf: 0.00)",
-      "parameters": {
-        "original_text": "สวัสดีครับ"
-      }
+      "actual": "greeting_hello",
+      "confidence": 0.85,
+      "passed": true,
+      "error": "",
+      "parameters": {}
     },
     {
       "test_name": "Greet_Thai_Casual",
       "input": "หวัดดี",
       "expected": "greeting_hello",
-      "actual": "UNKNOWN",
-      "confidence": 0.0,
-      "passed": false,
-      "error": "Expected greeting_hello, got UNKNOWN (Conf: 0.00)",
-      "parameters": {
-        "original_text": "หวัดดี"
-      }
+      "actual": "greeting_hello",
+      "confidence": 0.85,
+      "passed": true,
+      "error": "",
+      "parameters": {}
     },
     {
       "test_name": "Greet_English",
@@ -189,43 +181,37 @@
       "test_name": "Help_Request_TH",
       "input": "ช่วยหน่อยทำไงดี",
       "expected": "system_help",
-      "actual": "UNKNOWN",
-      "confidence": 0.0,
+      "actual": "system_help",
+      "confidence": 0.6,
       "passed": true,
-      "error": "Intent 'system_help' not defined in taxonomy yet (Expected behavior)",
-      "parameters": {
-        "original_text": "ช่วยหน่อยทำไงดี"
-      }
+      "error": "",
+      "parameters": {}
     },
     {
       "test_name": "Help_Capabilities",
       "input": "เธอทำอะไรได้บ้าง",
       "expected": "system_help",
-      "actual": "UNKNOWN",
-      "confidence": 0.0,
+      "actual": "system_help",
+      "confidence": 0.8125,
       "passed": true,
-      "error": "Intent 'system_help' not defined in taxonomy yet (Expected behavior)",
-      "parameters": {
-        "original_text": "เธอทำอะไรได้บ้าง"
-      }
+      "error": "",
+      "parameters": {}
     },
     {
       "test_name": "Help_Commands",
       "input": "มีคำสั่งอะไรบ้าง",
       "expected": "system_help",
-      "actual": "UNKNOWN",
-      "confidence": 0.0,
+      "actual": "system_help",
+      "confidence": 0.85,
       "passed": true,
-      "error": "Intent 'system_help' not defined in taxonomy yet (Expected behavior)",
-      "parameters": {
-        "original_text": "มีคำสั่งอะไรบ้าง"
-      }
+      "error": "",
+      "parameters": {}
     },
     {
       "test_name": "Help_English",
       "input": "Help me",
       "expected": "system_help",
-      "actual": "emergency_help",
+      "actual": "system_help",
       "confidence": 0.5714285714285714,
       "passed": true,
       "error": "",
@@ -257,25 +243,21 @@
       "test_name": "Edge_Mixed_Noise",
       "input": "!!! คำนวณ 1+1 ???",
       "expected": "MATH_ARITHMETIC_BASIC",
-      "actual": "UNKNOWN",
-      "confidence": 0.0,
-      "passed": false,
-      "error": "Expected MATH_ARITHMETIC_BASIC, got UNKNOWN (Conf: 0.00)",
-      "parameters": {
-        "original_text": "!!! คำนวณ 1+1 ???"
-      }
+      "actual": "math_arithmetic_basic",
+      "confidence": 0.75,
+      "passed": true,
+      "error": "",
+      "parameters": {}
     },
     {
       "test_name": "Edge_Very_Long_Number",
       "input": "999999999.99 + 0.01",
       "expected": "MATH_ARITHMETIC_BASIC",
-      "actual": "UNKNOWN",
-      "confidence": 0.0,
-      "passed": false,
-      "error": "Expected MATH_ARITHMETIC_BASIC, got UNKNOWN (Conf: 0.00)",
-      "parameters": {
-        "original_text": "999999999.99 + 0.01"
-      }
+      "actual": "math_arithmetic_basic",
+      "confidence": 0.75,
+      "passed": true,
+      "error": "",
+      "parameters": {}
     },
     {
       "test_name": "Security_Code_Injection",
@@ -341,25 +323,21 @@
       "test_name": "Weather_Query",
       "input": "อากาศวันนี้เป็นไง",
       "expected": "WEATHER_QUERY",
-      "actual": "UNKNOWN",
-      "confidence": 0.0,
-      "passed": false,
-      "error": "Expected WEATHER_QUERY, got UNKNOWN (Conf: 0.00)",
-      "parameters": {
-        "original_text": "อากาศวันนี้เป็นไง"
-      }
+      "actual": "weather_query",
+      "confidence": 0.6470588235294118,
+      "passed": true,
+      "error": "",
+      "parameters": {}
     },
     {
       "test_name": "Translation_Request",
       "input": "แปลคำว่า Hello เป็นภาษาไทย",
       "expected": "TRANSLATION_REQUEST",
-      "actual": "UNKNOWN",
-      "confidence": 0.0,
-      "passed": false,
-      "error": "Expected TRANSLATION_REQUEST, got UNKNOWN (Conf: 0.00)",
-      "parameters": {
-        "original_text": "แปลคำว่า Hello เป็นภาษาไทย"
-      }
+      "actual": "translation_request",
+      "confidence": 0.3076923076923077,
+      "passed": true,
+      "error": "",
+      "parameters": {}
     },
     {
       "test_name": "Coding_Python_Help",
@@ -387,13 +365,11 @@
       "test_name": "Joke_Request",
       "input": "เล่าตลกให้ฟังหน่อย",
       "expected": "ENTERTAINMENT_JOKE",
-      "actual": "UNKNOWN",
-      "confidence": 0.0,
-      "passed": false,
-      "error": "Expected ENTERTAINMENT_JOKE, got UNKNOWN (Conf: 0.00)",
-      "parameters": {
-        "original_text": "เล่าตลกให้ฟังหน่อย"
-      }
+      "actual": "entertainment_joke",
+      "confidence": 0.3888888888888889,
+      "passed": true,
+      "error": "",
+      "parameters": {}
     },
     {
       "test_name": "Advice_Relationship",
