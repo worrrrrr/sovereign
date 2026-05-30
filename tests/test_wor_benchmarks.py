@@ -6,13 +6,7 @@ from datetime import datetime
 # เพิ่ม path ให้ import core ได้
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
-try:
-    from core.wreasoning import WReasoningEngine
-except ImportError:
-    # Mock WReasoningEngine ถ้ายังไม่มีไฟล์จริง เพื่อไม่ให้สคริปต์พัง
-    class WReasoningEngine:
-        def analyze(self, text):
-            return {"answer": "Simulated Answer", "logic": "Simulated Logic"}
+from core.wreasoning import WReasoningEngine
 
 def run_benchmarks():
     tests = [
@@ -32,32 +26,47 @@ def run_benchmarks():
     print(f"🚀 เริ่มทดสอบ Wor Benchmarks ({len(tests)} ข้อ)...")
     print("-" * 50)
 
+    passed = 0
+    failed = 0
+    
     with open(output_file, 'w', encoding='utf-8') as f:
         for i, question in enumerate(tests, 1):
             timestamp = datetime.now().isoformat()
             
-            # จำลองการวิเคราะห์ (ในความเป็นจริงจะเรียก engine.analyze(question))
-            # เนื่องจากเราอาจยังไม่มี logic จริงครบทุกข้อ จึงใช้การตอบกลับแบบจำลอง
+            # เรียก WReasoningEngine จริง
+            result = engine.analyze(question)
+            
             response = {
                 "id": i,
                 "question": question,
                 "timestamp": timestamp,
-                "category": "general", # จะถูกกำหนดโดย engine ในอนาคต
-                "answer": "กำลังประมวลผลด้วย WReasoningEngine...", 
-                "logic_trace": "รอการเชื่อมต่อโมดูลวิเคราะห์จริง",
-                "status": "pending"
+                "category": result['category'],
+                "answer": result['answer'],
+                "logic_trace": result['logic_trace'],
+                "confidence": result['confidence'],
+                "status": "passed" if result['confidence'] >= 0.7 else "failed"
             }
             
             # เขียนลงไฟล์ทีละบรรทัด (JSONL format)
             f.write(json.dumps(response, ensure_ascii=False) + '\n')
             
             # แสดงผลบนหน้าจอ
-            print(f"[{i}/{len(tests)}] Q: {question}")
-            print(f"    A: {response['answer']}")
+            status_icon = "✅" if result['confidence'] >= 0.7 else "❌"
+            print(f"[{i}/{len(tests)}] {status_icon} Q: {question}")
+            print(f"    Category: {result['category']}")
+            print(f"    A: {result['answer']}")
+            print(f"    Confidence: {result['confidence']}")
             print("-" * 50)
+            
+            if result['confidence'] >= 0.7:
+                passed += 1
+            else:
+                failed += 1
 
     print(f"\n✅ เสร็จสิ้น! บันทึกผลลัพธ์แล้วที่: {output_file}")
     print("💡 รูปแบบ JSONL: 1 บรรทัด = 1 วัตถุ JSON (เหมาะสำหรับ Streaming และ Big Data)")
+    print(f"📊 สรุปผล: ผ่าน {passed} ข้อ, ไม่ผ่าน {failed} ข้อ จากทั้งหมด {len(tests)} ข้อ")
+    print(f"🎯 อัตราความสำเร็จ: {(passed/len(tests))*100:.2f}%")
 
 if __name__ == "__main__":
     run_benchmarks()

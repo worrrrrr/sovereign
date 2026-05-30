@@ -76,9 +76,9 @@ class ParameterParser:
     def extract_math_operands(text: str) -> Optional[Dict[str, Any]]:
         """
         ดึงตัวเลขและเครื่องหมายทางคณิตศาสตร์จากข้อความ
-        รองรับทั้งไทยและอังกฤษ และทศนิยม
+        รองรับทั้งไทยและอังกฤษ และทศนิยม รวมถึงจำนวนลบ
         """
-        # Pattern: เลข (อาจมีทศนิยม) + ช่องว่าง(หรือไม่) + เครื่องหมาย + ช่องว่าง(หรือไม่) + เลข
+        # Pattern: เลข (อาจมีทศนิยม, อาจเป็นลบ) + ช่องว่าง(หรือไม่) + เครื่องหมาย + ช่องว่าง(หรือไม่) + เลข
         pattern = r"(-?\d+\.?\d*)\s*([\+\-\*\/x÷])\s*(-?\d+\.?\d*)"
         match = re.search(pattern, text)
         
@@ -104,6 +104,28 @@ class ParameterParser:
             except (InvalidOperation, ValueError) as e:
                 logger.warning(f"Failed to parse math operands: {e}")
                 return None
+        
+        # Fallback: ลองหาเฉพาะตัวเลขเดี่ยวๆ ในกรณีที่มีรูปแบบพิเศษ
+        # เช่น "999999999.99 + 0.01" ที่อาจมีปัญหาเรื่อง spacing
+        fallback_pattern = r"(-?\d+\.?\d*)\s*([\+\-\*\/])\s*(-?\d+\.?\d*)"
+        match_fb = re.search(fallback_pattern, text.replace(' ', ''))
+        if match_fb:
+            try:
+                op1_str, operator, op2_str = match_fb.groups()
+                op1 = Decimal(op1_str)
+                op2 = Decimal(op2_str)
+                op_map = {'x': '*', '÷': '/'}
+                safe_operator = op_map.get(operator, operator)
+                return {
+                    "operand_1": float(op1),
+                    "operand_2": float(op2),
+                    "operator": safe_operator,
+                    "raw_operand_1": str(op1),
+                    "raw_operand_2": str(op2)
+                }
+            except (InvalidOperation, ValueError):
+                pass
+                
         return None
 
     @staticmethod
@@ -171,25 +193,43 @@ class PerceptionEngine:
         คำนวณความมั่นใจ (Confidence Score) จากการจับคู่ Pattern
         Returns: (score, matched_pattern)
         """
-        text_lower = text.lower()
+        # Pre-process: ลบ noise characters (!, ?, @, #, $, etc.) จากข้อความก่อนวิเคราะห์
+        # แต่ต้องเก็บเครื่องหมายทางคณิตศาสตร์ไว้: + - * / . และตัวเลข
+        clean_text = re.sub(r'[^0-9\w\s\u0E00-\u0E7F\+\-\*\/\.]', '', text).lower()
+        
         best_score = 0.0
         best_pattern = None
         
         for pattern in patterns:
             try:
-                # เช็คว่าเป็น Regex หรือคำธรรมดา
-                if any(char in pattern for char in ['.', '*', '+', '?', '[', ']', '(', ')']):
+                # เช็คว่าเป็น Regex จริงๆ หรือเป็นแค่คำที่มี character พิเศษ
+                # Regex ต้องมีโครงสร้างที่ชัดเจน เช่น มี [.]*+?[]() ในบริบทที่เหมาะสม
+                is_regex = self._is_valid_regex_pattern(pattern)
+                
+                if is_regex:
                     # เป็น Regex
-                    if re.search(pattern, text_lower):
+                    if re.search(pattern, clean_text):
                         score = 0.95
                         if score > best_score:
                             best_score = score
                             best_pattern = pattern
                 else:
                     # เป็นคำค้นหาธรรมดา (Keyword Matching)
-                    if pattern in text_lower:
-                        score = len(pattern) / len(text_lower)
-                        score = min(score, 0.85)
+                    if pattern in clean_text:
+                        # ปรับปรุงการคำนวณ score: ให้คะแนนสูงสำหรับสัญลักษณ์ทางคณิตศาสตร์
+                        # แต่ต้องตรวจสอบบริบทด้วยว่าเป็น mathematical expression จริงๆ
+                        if pattern in ['+', '-', '*', '/', '=']:
+                            # ตรวจสอบว่ามีตัวเลขอยู่รอบๆ เครื่องหมายหรือไม่
+                            # Pattern: เลข + เครื่องหมาย + เลข
+                            math_pattern = r'\d\s*[' + re.escape(pattern) + r']\s*\d'
+                            if re.search(math_pattern, clean_text):
+                                score = 0.75  # คะแนนสูงสำหรับ math operators ที่มีตัวเลขประกอบ
+                            else:
+                                score = 0.2  # คะแนนต่ำถ้าไม่มีตัวเลขประกอบ (อาจเป็น security threat)
+                        else:
+                            score = len(pattern) / len(clean_text) if len(clean_text) > 0 else 0
+                            score = min(score, 0.85)
+                        
                         if score > best_score:
                             best_score = score
                             best_pattern = pattern
@@ -198,6 +238,25 @@ class PerceptionEngine:
                 continue
                 
         return best_score, best_pattern
+    
+    def _is_valid_regex_pattern(self, pattern: str) -> bool:
+        """
+        ตรวจสอบว่า pattern เป็น regex ที่ถูกต้องหรือไม่
+        โดยตรวจสอบว่ามีโครงสร้าง regex ที่ชัดเจน (เช่น [...], (...), {n}, ^, $)
+        ไม่ใช่แค่มี character เดียวเช่น + หรือ *
+        """
+        # ถ้า pattern สั้นมาก (1-3 ตัวอักษร) ให้ถือว่าเป็น keyword
+        if len(pattern) <= 3:
+            return False
+        
+        # Regex ที่มีโครงสร้างชัดเจน
+        has_brackets = '[' in pattern or ']' in pattern
+        has_parens = '(' in pattern or ')' in pattern
+        has_quantifier_braces = '{' in pattern or '}' in pattern
+        has_anchors = pattern.startswith('^') or pattern.endswith('$')
+        has_dot_star = '.*' in pattern or '.+' in pattern
+        
+        return has_brackets or has_parens or has_quantifier_braces or has_anchors or has_dot_star
 
     def analyze(self, user_input: str) -> IntentMatch:
         """

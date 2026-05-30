@@ -28,12 +28,25 @@
         "คูณ",
         "หาร",
         "ได้กี่",
-        "มีค่าเท่ากับ"
+        "มีค่าเท่ากับ",
+        "หาผลบวก",
+        "หาผลลบ",
+        "หาผลคูณ",
+        "หาผลหาร",
+        "=",
+        "+",
+        "-",
+        "*",
+        "/",
+        "เท่ากับ",
+        "คำตอบ"
       ],
       "examples": [
         "9.8-9.11",
         "what is 5+3",
-        "calculate 10*2"
+        "calculate 10*2",
+        "หาผลบวกของ 10 และ 20",
+        "-5 + 10 เท่ากับเท่าไหร่"
       ]
     },
     {
@@ -270,12 +283,22 @@
         "hey",
         "good morning",
         "good afternoon",
-        "good evening"
+        "good evening",
+        "สวัสดี",
+        "สวัสดีครับ",
+        "สวัสดีค่ะ",
+        "หวัดดี",
+        "หวัดดีครับ",
+        "หวัดดีค่ะ",
+        "ไฮ้",
+        "ฮัลโหล"
       ],
       "examples": [
         "hello",
         "hi there",
-        "good morning"
+        "good morning",
+        "สวัสดีครับ",
+        "หวัดดี"
       ]
     },
     {
@@ -421,12 +444,22 @@
         "forecast",
         "temperature",
         "rain",
-        "sunny"
+        "sunny",
+        "อากาศ",
+        "ฝน",
+        "แดด",
+        "ร้อน",
+        "หนาว",
+        "เมฆ",
+        "ลม",
+        "พยากรณ์อากาศ"
       ],
       "examples": [
         "weather today",
         "will it rain",
-        "temperature now"
+        "temperature now",
+        "อากาศวันนี้เป็นไง",
+        "ฝนจะตกไหม"
       ]
     },
     {
@@ -454,11 +487,18 @@
         "translate",
         "meaning in",
         "how to say",
-        "convert language"
+        "convert language",
+        "แปล",
+        "ภาษาไทย",
+        "ภาษาอังกฤษ",
+        "แปลภาษา",
+        "แปลคำว่า"
       ],
       "examples": [
         "translate hello to Thai",
-        "what does this mean in English"
+        "what does this mean in English",
+        "แปลคำว่า Hello เป็นภาษาไทย",
+        "ภาษาอังกฤษของคำว่า สวัสดี"
       ]
     },
     {
@@ -617,6 +657,28 @@
         "system status",
         "are you working",
         "health check"
+      ]
+    },
+    {
+      "id": "system_help",
+      "name": "System Help",
+      "category": "system",
+      "patterns": [
+        "help",
+        "ช่วยหน่อย",
+        "ทำอะไรได้บ้าง",
+        "มีคำสั่งอะไรบ้าง",
+        "capabilities",
+        "features",
+        "assist me",
+        "guide me"
+      ],
+      "examples": [
+        "ช่วยหน่อยทำไงดี",
+        "เธอทำอะไรได้บ้าง",
+        "มีคำสั่งอะไรบ้าง",
+        "help me",
+        "what can you do"
       ]
     },
     {
@@ -857,12 +919,19 @@
         "joke",
         "funny",
         "laugh",
-        "humor"
+        "humor",
+        "เล่าตลก",
+        "เรื่องตลก",
+        "ขำๆ",
+        "ฮาๆ",
+        "เล่าเรื่องตลก"
       ],
       "examples": [
         "tell me a joke",
         "something funny",
-        "make me laugh"
+        "make me laugh",
+        "เล่าตลกให้ฟังหน่อย",
+        "มีเรื่องตลกไหม"
       ]
     },
     {
@@ -1381,6 +1450,49 @@
         "ค่าพายคืออะไร",
         "who is the president of usa",
         "what is the capital of thailand"
+      ]
+    },
+    {
+      "id": "weather_query",
+      "name": "Weather_Query",
+      "category": "inquiry",
+      "description": "สอบถามสภาพอากาศ อุณหภูมิ พยากรณ์อากาศ",
+      "patterns": [
+        "อากาศ",
+        "สภาพอากาศ",
+        "ฝน",
+        "แดด",
+        "ร้อน",
+        "หนาว",
+        "เมฆ",
+        "ลม",
+        "อุณหภูมิ",
+        "พยากรณ์อากาศ",
+        "อากาศวันนี้",
+        "อากาศพรุ่งนี้",
+        "อากาศเป็นไง",
+        "อากาศเป็นอย่างไร",
+        "weather",
+        "temperature",
+        "rainy",
+        "sunny",
+        "cloudy",
+        "windy",
+        "forecast",
+        "hot",
+        "cold",
+        "กี่องศา",
+        "ฝนตกไหม",
+        "แดดออกไหม"
+      ],
+      "examples": [
+        "อากาศวันนี้เป็นไง",
+        "พรุ่งนี้ฝนจะตกไหม",
+        "อุณหภูมิเท่าไหร่",
+        "สภาพอากาศวันนี้",
+        "weather today",
+        "is it going to rain",
+        "how hot is it today"
       ]
     }
   ],
