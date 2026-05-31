@@ -73,11 +73,77 @@ class ParameterParser:
     """
     
     @staticmethod
+    def extract_equation_system(text: str) -> Optional[Dict[str, Any]]:
+        """
+        ดึงระบบสมการจากข้อความภาษาไทย
+        เช่น "A มากกว่า B อยู่ 5 และ A+B=15" หรือ "x + y = 10, x - y = 2"
+        """
+        # Pattern 1: หาสมการที่มีเครื่องหมาย = โดยตรง
+        equations = []
+        
+        # ลบคำว่า "จงหา", "แสดงวิธีทำ", "คำตอบคือ" และคำที่คล้ายกันออกก่อน
+        text_cleaned = re.sub(r'\s*(?:จงหา|แสดงวิธี|คำตอบ|หา|show|find)\s*[A-Za-z0-9]*\s*', ' ', text, flags=re.IGNORECASE)
+        
+        # แยกประโยคด้วย "และ", ",", ";"
+        parts = re.split(r'\s+และ\s+|[,;]\s*', text_cleaned)
+        
+        for part in parts:
+            part = part.strip()
+            if not part:
+                continue
+                
+            # หา pattern ที่มีตัวอักษร/ตัวเลข = ตัวอักษร/ตัวเลข
+            if '=' in part:
+                # ใช้ regex ที่ครอบคลุมเครื่องหมายทางคณิตศาสตร์มากขึ้น
+                eq_match = re.search(r'([A-Za-z0-9+\-*/^=().\s]+)', part)
+                if eq_match:
+                    eq_str = eq_match.group(1).strip()
+                    # ตรวจสอบว่ามีอย่างน้อยหนึ่งตัวแปรและหนึ่งเครื่องหมาย =
+                    if '=' in eq_str and re.search(r'[A-Za-z]', eq_str):
+                        equations.append(eq_str)
+            else:
+                # พยายามแปลงประโยคภาษาไทยเป็นสมการ
+                # Pattern: "X มากกว่า Y อยู่ Z" -> X - Y = Z
+                more_than_match = re.search(r'([A-Za-z0-9]+)\s+มากกว่า\s+([A-Za-z0-9]+)\s+อยู่\s+(\d+)', part)
+                if more_than_match:
+                    x, y, z = more_than_match.groups()
+                    equations.append(f"{x} - {y} = {z}")
+                
+                # Pattern: "X น้อยกว่า Y อยู่ Z" -> Y - X = Z
+                less_than_match = re.search(r'([A-Za-z0-9]+)\s+น้อยกว่า\s+([A-Za-z0-9]+)\s+อยู่\s+(\d+)', part)
+                if less_than_match:
+                    x, y, z = less_than_match.groups()
+                    equations.append(f"{y} - {x} = {z}")
+                
+                # Pattern: "X บวก Y เท่ากับ Z" -> X + Y = Z
+                plus_equal_match = re.search(r'([A-Za-z0-9]+)\s+บวก\s+([A-Za-z0-9]+)\s+เท่ากับ\s+(\d+)', part)
+                if plus_equal_match:
+                    x, y, z = plus_equal_match.groups()
+                    equations.append(f"{x} + {y} = {z}")
+        
+        if len(equations) >= 2:
+            return {
+                "equations": equations,
+                "raw_text": text
+            }
+        
+        return None
+
+    @staticmethod
     def extract_math_operands(text: str) -> Optional[Dict[str, Any]]:
         """
         ดึงตัวเลขและเครื่องหมายทางคณิตศาสตร์จากข้อความ
         รองรับทั้งไทยและอังกฤษ และทศนิยม รวมถึงจำนวนลบ
         """
+        # ตรวจสอบว่าเป็นระบบสมการหรือไม่ (มีหลายสมการ)
+        equation_system = ParameterParser.extract_equation_system(text)
+        if equation_system:
+            return {
+                "is_system": True,
+                "equations": equation_system["equations"],
+                "raw_text": equation_system["raw_text"]
+            }
+        
         # Pattern: เลข (อาจมีทศนิยม, อาจเป็นลบ) + ช่องว่าง(หรือไม่) + เครื่องหมาย + ช่องว่าง(หรือไม่) + เลข
         pattern = r"(-?\d+\.?\d*)\s*([\+\-\*\/x÷])\s*(-?\d+\.?\d*)"
         match = re.search(pattern, text)

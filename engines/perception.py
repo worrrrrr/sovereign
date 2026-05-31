@@ -377,8 +377,18 @@ class PerceptionEngine:
         # Import IntentType locally to avoid circular dependency
         from core.intent_parser import IntentType
         
+        # Logic/Equation solving (Thai language support via AdvancedLogicEngine)
+        if intent_type == IntentType.SOLVE_EQUATION:
+            # ตรวจสอบว่าเป็นสมการทั่วไป (algebraic) หรือสมการภาษาไทย (logic)
+            text_lower = input_text.lower()
+            # ถ้ามี pattern ภาษาไทยเช่น "มากกว่า", "น้อยกว่า", "แก้สมการ" ให้ใช้ logic_equation
+            if any(word in text_lower for word in ['มากกว่า', 'น้อยกว่า', 'แก้สมการ', 'หาค่า x', 'หาค่า y']):
+                return 'logic_equation'
+            # ถ้าเป็นสมการคณิตศาสตร์ทั่วไปที่มีตัวแปรภาษาอังกฤษ ให้ใช้ algebraic_equation
+            return 'algebraic_equation'
+        
         # Math tasks
-        if intent_type in [IntentType.CALCULATION, IntentType.SOLVE_EQUATION, 
+        if intent_type in [IntentType.CALCULATION, 
                           IntentType.SOLVE_CONSTRAINT, IntentType.SOLVE_FUNCTIONAL]:
             return 'arithmetic'
         

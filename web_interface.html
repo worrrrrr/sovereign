@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Agent Control Panel</title>
+    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;600&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #00f2ff;
+            --secondary-color: #bd00ff;
+            --bg-dark: #0f172a;
+            --glass-bg: rgba(30, 41, 59, 0.7);
+            --glass-border: rgba(255, 255, 255, 0.1);
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Sarabun', sans-serif;
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            height: 100vh;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+        }
+
+        /* Animated Background */
+        .background-gradient {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at 10% 20%, rgba(0, 242, 255, 0.15) 0%, transparent 40%),
+                        radial-gradient(circle at 90% 80%, rgba(189, 0, 255, 0.15) 0%, transparent 40%);
+            z-index: -1;
+            animation: pulseBg 10s ease-in-out infinite alternate;
+        }
+
+        @keyframes pulseBg {
+            0% { transform: scale(1); opacity: 0.8; }
+            100% { transform: scale(1.1); opacity: 1; }
+        }
+
+        /* Main Container - Glassmorphism */
+        .container {
+            width: 90%;
+            max-width: 1000px;
+            height: 85vh;
+            background: var(--glass-bg);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        /* Header */
+        header {
+            padding: 20px 30px;
+            border-bottom: 1px solid var(--glass-border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-family: 'JetBrains Mono', monospace;
+            font-weight: 700;
+            font-size: 1.2rem;
+            background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .status-badge {
+            font-size: 0.8rem;
+            padding: 6px 12px;
+            border-radius: 20px;
+            background: rgba(0, 242, 255, 0.1);
+            color: var(--primary-color);
+            border: 1px solid rgba(0, 242, 255, 0.2);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            background-color: var(--primary-color);
+            border-radius: 50%;
+            animation: blink 2s infinite;
+        }
+
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.4; }
+        }
+
+        /* Chat Area */
+        .chat-area {
+            flex: 1;
+            padding: 30px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            scroll-behavior: smooth;
+        }
+
+        .chat-area::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .chat-area::-webkit-scrollbar-thumb {
+            background-color: var(--glass-border);
+            border-radius: 3px;
+        }
+
+        .message {
+            max-width: 80%;
+            padding: 16px 20px;
+            border-radius: 16px;
+            line-height: 1.6;
+            font-size: 0.95rem;
+            animation: fadeIn 0.3s ease-up;
+            position: relative;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .message.user {
+            align-self: flex-end;
+            background: linear-gradient(135deg, rgba(0, 242, 255, 0.15), rgba(0, 242, 255, 0.05));
+            border: 1px solid rgba(0, 242, 255, 0.2);
+            border-bottom-right-radius: 4px;
+            color: #e0f7fa;
+        }
+
+        .message.ai {
+            align-self: flex-start;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--glass-border);
+            border-bottom-left-radius: 4px;
+            color: var(--text-main);
+        }
+
+        .message .timestamp {
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            margin-top: 8px;
+            text-align: right;
+            display: block;
+        }
+
+        .typing-indicator {
+            display: none;
+            align-self: flex-start;
+            background: rgba(255, 255, 255, 0.05);
+            padding: 12px 20px;
+            border-radius: 16px;
+            border-bottom-left-radius: 4px;
+            margin-bottom: 10px;
+        }
+
+        .typing-dots {
+            display: flex;
+            gap: 4px;
+        }
+
+        .typing-dots span {
+            width: 6px;
+            height: 6px;
+            background-color: var(--text-muted);
+            border-radius: 50%;
+            animation: bounce 1.4s infinite ease-in-out both;
+        }
+
+        .typing-dots span:nth-child(1) { animation-delay: -0.32s; }
+        .typing-dots span:nth-child(2) { animation-delay: -0.16s; }
+
+        @keyframes bounce {
+            0%, 80%, 100% { transform: scale(0); }
+            40% { transform: scale(1); }
+        }
+
+        /* Input Area */
+        .input-area {
+            padding: 20px 30px;
+            border-top: 1px solid var(--glass-border);
+            background: rgba(15, 23, 42, 0.5);
+        }
+
+        .quick-actions {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+            overflow-x: auto;
+            padding-bottom: 5px;
+        }
+
+        .quick-btn {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--glass-border);
+            color: var(--text-muted);
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            white-space: nowrap;
+            font-family: 'Sarabun', sans-serif;
+        }
+
+        .quick-btn:hover {
+            background: rgba(0, 242, 255, 0.1);
+            color: var(--primary-color);
+            border-color: rgba(0, 242, 255, 0.3);
+            transform: translateY(-2px);
+        }
+
+        .input-group {
+            display: flex;
+            gap: 12px;
+            position: relative;
+        }
+
+        input[type="text"] {
+            flex: 1;
+            background: rgba(0, 0, 0, 0.2);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            padding: 16px 20px;
+            color: var(--text-main);
+            font-family: 'Sarabun', sans-serif;
+            font-size: 1rem;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+
+        input[type="text"]:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 2px rgba(0, 242, 255, 0.1);
+        }
+
+        button.send-btn {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            border: none;
+            border-radius: 12px;
+            width: 50px;
+            height: 50px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            color: white;
+            font-size: 1.2rem;
+        }
+
+        button.send-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 15px rgba(0, 242, 255, 0.4);
+        }
+
+        button.send-btn:active {
+            transform: scale(0.95);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .container {
+                width: 100%;
+                height: 100vh;
+                border-radius: 0;
+                border: none;
+            }
+            .message {
+                max-width: 90%;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="background-gradient"></div>
+
+    <div class="container">
+        <header>
+            <div class="logo">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M12 2a2 2 0 0 1 2 2v2a2 2 0 0 1-2 2 2 2 0 0 1-2-2V4a2 2 0 0 1 2-2z"/>
+                    <path d="M12 16a2 2 0 0 1 2 2v2a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-2a2 2 0 0 1 2-2z"/>
+                    <path d="M12 8a2 2 0 0 1 2 2v4a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-4a2 2 0 0 1 2-2z"/>
+                    <path d="M4.93 4.93l1.41 1.41"/>
+                    <path d="M17.66 17.66l1.41 1.41"/>
+                    <path d="M2 12h2"/>
+                    <path d="M20 12h2"/>
+                    <path d="M4.93 19.07l1.41-1.41"/>
+                    <path d="M17.66 6.34l1.41-1.41"/>
+                </svg>
+                AI NEXUS
+            </div>
+            <div class="status-badge">
+                <div class="status-dot"></div>
+                <span>Online</span>
+            </div>
+        </header>
+
+        <div class="chat-area" id="chatArea">
+            <div class="message ai">
+                สวัสดีครับ! ผมคือ AI Agent ของคุณ สามารถช่วยคำนวณคณิตศาสตร์ภาษาไทย ควบคุมอุปกรณ์ หรือค้นหาข้อมูลได้<br>
+                ลองพิมพ์คำสั่งเช่น "หาผลบวกของ 123 และ 456" หรือ "เปิดไฟห้องนอน" ดูสิครับ
+                <span class="timestamp">Just now</span>
+            </div>
+        </div>
+
+        <div class="typing-indicator" id="typingIndicator">
+            <div class="typing-dots">
+                <span></span><span></span><span></span>
+            </div>
+        </div>
+
+        <div class="input-area">
+            <div class="quick-actions">
+                <button class="quick-btn" onclick="setInput('หาผลบวกของ 123 และ 456')">➕ คำนวณบวก</button>
+                <button class="quick-btn" onclick="setInput('หาผลต่างของ 1000 และ 255')">➖ คำนวณลบ</button>
+                <button class="quick-btn" onclick="setInput('เปิดไฟห้องนอน')">💡 เปิดไฟ</button>
+                <button class="quick-btn" onclick="setInput('สภาพอากาศวันนี้เป็นอย่างไร')">🌤️ สภาพอากาศ</button>
+            </div>
+            <div class="input-group">
+                <input type="text" id="userInput" placeholder="พิมพ์คำสั่งของคุณที่นี่..." onkeypress="handleKeyPress(event)">
+                <button class="send-btn" onclick="sendMessage()">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="22" y1="2" x2="11" y2="13"></line>
+                        <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+                    </svg>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const chatArea = document.getElementById('chatArea');
+        const userInput = document.getElementById('userInput');
+        const typingIndicator = document.getElementById('typingIndicator');
+
+        function setInput(text) {
+            userInput.value = text;
+            userInput.focus();
+        }
+
+        function handleKeyPress(event) {
+            if (event.key === 'Enter') {
+                sendMessage();
+            }
+        }
+
+        function getCurrentTime() {
+            const now = new Date();
+            return now.toLocaleTimeString('th-TH', { hour: '2-digit', minute: '2-digit' });
+        }
+
+        function appendMessage(text, sender) {
+            const messageDiv = document.createElement('div');
+            messageDiv.classList.add('message', sender);
+            
+            // Convert simple markdown-like syntax to HTML if needed
+            let formattedText = text.replace(/\n/g, '<br>');
+            
+            messageDiv.innerHTML = `
+                ${formattedText}
+                <span class="timestamp">${getCurrentTime()}</span>
+            `;
+            
+            chatArea.appendChild(messageDiv);
+            chatArea.scrollTop = chatArea.scrollHeight;
+        }
+
+        function showTyping() {
+            typingIndicator.style.display = 'block';
+            chatArea.scrollTop = chatArea.scrollHeight;
+        }
+
+        function hideTyping() {
+            typingIndicator.style.display = 'none';
+        }
+
+        async function sendMessage() {
+            const text = userInput.value.trim();
+            if (!text) return;
+
+            // Add user message
+            appendMessage(text, 'user');
+            userInput.value = '';
+
+            // Show typing indicator
+            showTyping();
+
+            // --- SIMULATION MODE (เนื่องจากยังไม่มี Backend Server) ---
+            // ในอนาคตส่วนนี้จะเปลี่ยนเป็น fetch() ไปยัง API ของ Python
+            setTimeout(() => {
+                hideTyping();
+                
+                let responseText = "";
+                
+                // จำลองการตอบสนองเบื้องต้นตาม Keyword
+                if (text.includes("หาผลบวก") || text.includes("หาผลต่าง") || text.includes("หาผลคูณ") || text.includes("หาผลหาร")) {
+                    responseText = "🧮 <b>วิเคราะห์:</b> ตรวจพบคำสั่งคำนวณคณิตศาสตร์\n<b>Intent:</b> CALCULATION\n<b>สถานะ:</b> กำลังประมวลผลตัวเลข... (จำลอง)\n\n(หมายเหตุ: เชื่อมต่อกับ Python Backend เพื่อแสดงผลลัพธ์จริง)";
+                } else if (text.includes("เปิด") || text.includes("ปิด")) {
+                    responseText = "💡 <b>วิเคราะห์:</b> ตรวจพบคำสั่งควบคุมอุปกรณ์\n<b>Intent:</b> COMMAND\n<b>Action:</b> TOGGLE_DEVICE\n\n(จำลองการส่งสัญญาณไปยังอุปกรณ์)";
+                } else {
+                    responseText = "🤖 ได้รับคำสั่งแล้วครับ: \"" + text + "\"\n\nขณะนี้ระบบอยู่ในโหมดจำลอง (Simulation) กรุณาเชื่อมต่อ Python Backend เพื่อการทำงานเต็มรูปแบบ";
+                }
+
+                appendMessage(responseText, 'ai');
+            }, 1000 + Math.random() * 1000); // Delay สุ่มระหว่าง 1-2 วินาที
+            // -------------------------------------------------------
+
+            /* 
+            // CODE ตัวอย่างเมื่อมี Backend จริง:
+            try {
+                const response = await fetch('http://localhost:8000/api/chat', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ message: text })
+                });
+                const data = await response.json();
+                hideTyping();
+                appendMessage(data.response, 'ai');
+            } catch (error) {
+                hideTyping();
+                appendMessage('เกิดข้อผิดพลาดในการเชื่อมต่อเซิร์ฟเวอร์', 'ai');
+            }
+            */
+        }
+    </script>
+</body>
+</html>

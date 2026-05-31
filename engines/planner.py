@@ -56,6 +56,12 @@ class PlannerEngine:
                     'solve': 'solve_equation'
                 }
             },
+            'logic_equation': {
+                'tools': ['logic'],
+                'actions': {
+                    'solve': 'solve_equation'
+                }
+            },
             'greeting': {
                 'tools': [],
                 'actions': {}
@@ -86,6 +92,28 @@ class PlannerEngine:
         """
         params = task.parameters
         constraints = task.constraints
+        
+        # Handle logic/equation solving from AdvancedLogicEngine (Thai language support)
+        # ต้องตรวจสอบก่อน algebraic equations เพราะอาจมี pattern ซ้อนกัน
+        if task.task_type == 'logic_equation' or params.get('requires_logic_solver'):
+            equation_text = params.get('equation', params.get('raw_text', ''))
+            if not equation_text:
+                equation_text = params.get('original_input', '')
+            
+            return ExecutionPlan(
+                is_valid=True,
+                steps=[
+                    PlanStep(
+                        tool_name='logic',
+                        action='solve_equation',
+                        parameters={'text': equation_text},
+                        description=f"Solve equation/logic: {equation_text}"
+                    )
+                ],
+                task_type=task.task_type,
+                intent_id=task.intent_id,
+                metadata={'reasoning_type': 'equation_or_logic'}
+            )
         
         # Handle algebraic equations (e.g., "2**x = x**6")
         if constraints.get('requires_symbolic_solver') or params.get('equation_type') == 'algebraic':
@@ -263,6 +291,27 @@ class PlannerEngine:
                 task_type=task.task_type,
                 intent_id=task.intent_id,
                 metadata={'reasoning_type': 'syllogism'}
+            )
+        
+        # Handle logic/equation solving from AdvancedLogicEngine
+        if task.task_type == 'logic_equation' or params.get('requires_logic_solver'):
+            equation_text = params.get('equation', params.get('raw_text', ''))
+            if not equation_text:
+                equation_text = params.get('original_input', '')
+            
+            return ExecutionPlan(
+                is_valid=True,
+                steps=[
+                    PlanStep(
+                        tool_name='logic',
+                        action='solve_equation',
+                        parameters={'text': equation_text},
+                        description=f"Solve equation/logic: {equation_text}"
+                    )
+                ],
+                task_type=task.task_type,
+                intent_id=task.intent_id,
+                metadata={'reasoning_type': 'equation_or_logic'}
             )
         
         # Default fallback
