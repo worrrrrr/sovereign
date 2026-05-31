@@ -235,20 +235,36 @@ def solve_diophantine_z3(equation_str: str) -> Dict[str, Any]:
         }
 
 
-def solve_equation(equation_str: str) -> Dict[str, Any]:
+def solve_equation(equation_str: str, verbose: bool = False) -> Dict[str, Any]:
     """
     Solve mathematical equations using SymPy or Z3.
-    Auto-detects if it's a Diophantine equation (integer solutions) or general equation.
+    Auto-detects if it's a Diophantine equation (integer solutions), system of equations, or general equation.
     
     Args:
-        equation_str: Equation as string, e.g., "2**x = x**6" or "x^2 + 19x - 92 = k^2"
+        equation_str: Equation as string, e.g., "2**x = x**6", "x^2 + 19x - 92 = k^2", or "A + B = 15, A - B = 5"
+        verbose: If True, return detailed steps
     
     Returns:
         Dictionary with solutions, steps, and metadata
     """
-    # Clean the input: Remove non-mathematical text (e.g., Thai instructions like "แสดงวิธีคิด")
-    # Keep only numbers, operators, variables, parentheses, and '='
     import re
+    
+    # ขั้นตอนที่ 1: ตรวจสอบว่าเป็นระบบสมการจาก Perception Parser หรือไม่
+    from core.perception import ParameterParser
+    parsed_params = ParameterParser.extract_math_operands(equation_str)
+    
+    # ถ้าเป็นระบบสมการที่ parse ได้จากภาษาไทย
+    if parsed_params and parsed_params.get('is_system'):
+        equations = parsed_params.get('equations', [])
+        if len(equations) >= 2:
+            from tools.math_solver import solve_system_of_equations_sympy
+            result = solve_system_of_equations_sympy(equations, verbose)
+            result['raw_input'] = equation_str
+            return result
+    
+    # ขั้นตอนที่ 2: Clean the input สำหรับกรณีทั่วไป
+    # Remove non-mathematical text (e.g., Thai instructions like "แสดงวิธีคิด", "จงหา")
+    # Keep only numbers, operators, variables, parentheses, and '='
     # Pattern to keep: digits, letters (variables), operators (+-*/^=), dots, spaces, parentheses
     cleaned_eq = re.sub(r'[^0-9a-zA-Z+\-*/^=().\s]', '', equation_str)
     if not cleaned_eq.strip():
@@ -257,6 +273,16 @@ def solve_equation(equation_str: str) -> Dict[str, Any]:
             'error': 'ไม่พบสมการคณิตศาสตร์ที่ถูกต้องในข้อความที่ป้อนเข้ามา',
             'raw_input': equation_str
         }
+    
+    # ตรวจสอบว่าเป็นระบบสมการหรือไม่ (มีหลายสมการคั่นด้วย comma หรือ semicolon)
+    if ',' in cleaned_eq and '=' in cleaned_eq:
+        # มีโอกาสเป็นระบบสมการ
+        equation_parts = [eq.strip() for eq in cleaned_eq.split(',') if '=' in eq]
+        if len(equation_parts) >= 2:
+            from tools.math_solver import solve_system_of_equations_sympy
+            result = solve_system_of_equations_sympy(equation_parts, verbose)
+            result['raw_input'] = equation_str
+            return result
     
     # ตรวจสอบว่าเป็นสมการ Diophantine หรือไม่ (มี k^2 หรือโจทย์หาจำนวนเต็ม)
     if 'k^2' in cleaned_eq or 'integer solution' in cleaned_eq.lower():

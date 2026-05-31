@@ -50,6 +50,7 @@ class Orchestrator:
             from tools import math  # noqa: F401
             from tools import core_tools  # noqa: F401
             from tools import knowledge_tool  # noqa: F401
+            from tools import logic_tool  # noqa: F401
             
             logger.info("Sovereign AI Orchestrator initialized successfully.")
             
@@ -205,6 +206,37 @@ class Orchestrator:
                 for tool in tools:
                     lines.append(f"  - {tool['name']}: {tool['description']}")
                 return "\n".join(lines)
+        
+        # กรณีแก้สมการ/ตรรกะ (Logic Engine)
+        if task.intent_id == "logic_equation" or intent_type == 'logic_equation' or task.task_type == 'logic_equation':
+            if isinstance(output, dict):
+                if output.get('success'):
+                    solution = output.get('solution')
+                    steps = output.get('steps', '')
+                    msg = output.get('message', '')
+                    if msg:
+                        return msg
+                    elif steps:
+                        return f"คำตอบ: {solution}\n\nขั้นตอนการแก้:\n{steps}"
+                    else:
+                        return f"คำตอบ: {solution}"
+                else:
+                    return output.get('error', 'ไม่สามารถแก้สมการนี้ได้')
+        
+        # กรณีแก้สมการคณิตศาสตร์ทั่วไป (SymPy)
+        if task.intent_id == "math_solve_equation":
+            if isinstance(output, dict):
+                if output.get('success'):
+                    solutions = output.get('solutions', [])
+                    variable = output.get('variable', 'x')
+                    steps = output.get('steps', '')
+                    if solutions:
+                        sol_str = ', '.join([str(s) for s in solutions])
+                        return f"คำตอบของสมการคือ {variable} = {sol_str}"
+                    else:
+                        return "ไม่พบคำตอบ"
+                else:
+                    return output.get('error', 'ไม่สามารถแก้สมการนี้ได้')
         
         # Fallback: แสดงผลลัพธ์ดิบ
         return f"ผลลัพธ์: {output}"

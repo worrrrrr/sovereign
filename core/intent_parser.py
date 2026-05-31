@@ -97,6 +97,20 @@ class IntentParser:
         self.functional_keywords = ["f(x)", "f(y)", "functional", "ฟังก์ชัน", "สมการเชิงฟังก์ชัน"]
         self.search_keywords = ["ค้นหา", "search", "google", "ข่าว", "อากาศ", "weather", "news"]
         
+        # Thai math operation keywords (สำหรับตรวจจับการคำนวณภาษาไทย)
+        self.thai_math_ops = {
+            "ผลบวก": "+",
+            "บวก": "+",
+            "ผลลบ": "-",
+            "ลบ": "-",
+            "ผลต่าง": "-",
+            "ต่าง": "-",  # เพิ่ม "ต่าง" เฉยๆ ด้วย (สำหรับ "หาผลต่าง")
+            "ผลคูณ": "*",
+            "คูณ": "*",
+            "ผลหาร": "/",
+            "หาร": "/",
+        }
+        
         # ----------------------------------------------------
         # Helper: Mapping คำกริยาไทย -> CoreAction
         # ----------------------------------------------------
@@ -111,7 +125,7 @@ class IntentParser:
             "เปลี่ยน": CoreAction.EDIT_CHANGE,
             "ปรับ": CoreAction.EDIT_CHANGE,
             "ค้นหา": CoreAction.SEARCH_CHECK,
-            "หา": CoreAction.SEARCH_CHECK,
+            # หมายเหตุ: "หา" ในบริบทคณิตศาสตร์จะจัดการแยกต่างหาก (ไม่ใช้ SEARCH_CHECK)
             "ตรวจสอบ": CoreAction.SEARCH_CHECK,
             "ส่ง": CoreAction.SEND_TRANSFER,
             "โอน": CoreAction.SEND_TRANSFER,
@@ -425,7 +439,27 @@ class IntentParser:
                 reasoning="\n".join(reasoning_steps)
             )
 
-        # 1.3 ตรวจสอบสมการทั่วไป (Equation Solving - SymPy/Z3 fallback)
+        # 1.3 ตรวจสอบสมการ/ตรรกะภาษาไทย (เช่น "แก้สมการ x + 5 = 10", "A มากกว่า B อยู่ 5, A+B=15")
+        # ต้องตรวจสอบก่อนสมการทั่วไป เพราะอาจมี pattern ซ้อนกัน
+        logic_check = self._check_logic_equation(user_input)
+        if logic_check:
+            reasoning_steps.append("ตรวจพบโจทย์สมการหรือตรรกะภาษาไทย")
+            return ParsedIntent(
+                intent_type=IntentType.SOLVE_EQUATION,
+                original_input=user_input,
+                action="solve_logic_equation",
+                entities=[],
+                params={
+                    "equation": user_input,
+                    "requires_logic_solver": True,
+                    "intent_type": "logic_equation"
+                },
+                context="logic_equation",
+                confidence=0.95,
+                reasoning="\n".join(reasoning_steps)
+            )
+
+        # 1.4 ตรวจสอบสมการทั่วไป (Equation Solving - SymPy/Z3 fallback)
         # ต้องมีตัวแปรจริงๆ (เช่น x, y) ไม่ใช่แค่คำลงท้าย "เท่ากับเท่าไหร่"
         has_real_variable = bool(re.search(r'[a-zA-Z]', user_input)) and not re.search(r'เท่ากับเท่าไหร่|ได้เท่าไร|เท่ากับ', user_input)
         
@@ -444,7 +478,24 @@ class IntentParser:
                 reasoning="\n".join(reasoning_steps)
             )
 
-        # 1.4 ตรวจสอบการคำนวณ murni (เช่น "9.8-9.11", "คำนวณ 9.8-9.11", "9.8-9.11 ได้เท่าไร")
+        # 1.5 ตรวจสอบการคำนวณภาษาไทย (เช่น "หาผลบวกของ 123 และ 456", "หาผลคูณของ 5 และ 3")
+        # ต้องตรวจสอบก่อนการคำนวณรูปแบบตัวเลขล้วน
+        thai_calc_match = self._extract_thai_calculation(user_input)
+        if thai_calc_match:
+            num1, op, num2 = thai_calc_match
+            reasoning_steps.append(f"ตรวจพบการคำนวณภาษาไทย: {num1} {op} {num2}")
+            return ParsedIntent(
+                intent_type=IntentType.CALCULATION,
+                original_input=user_input,
+                action=f"calculate_{op}",
+                entities=[num1, num2],
+                params={"expression": user_input, "num1": num1, "num2": num2, "operator": op},
+                context="simple_arithmetic",
+                confidence=0.98,
+                reasoning="\n".join(reasoning_steps)
+            )
+
+        # 1.5 ตรวจสอบการคำนวณ murni (เช่น "9.8-9.11", "คำนวณ 9.8-9.11", "9.8-9.11 ได้เท่าไร")
         # รองรับทั้งรูปแบบไทยและอังกฤษ มีหรือไม่มีคำลงท้ายก็ได้
         calc_patterns = [
             r"(-?\d+\.?\d*)\s*([-+*/])\s*(-?\d+\.?\d*)",  # พื้นฐาน: 9.8-9.11
@@ -572,6 +623,72 @@ class IntentParser:
             except ValueError:
                 pass
         return entities
+
+    def _extract_thai_calculation(self, text: str) -> Optional[Tuple[float, str, float]]:
+        """
+        แยกการคำนวณภาษาไทย เช่น "หาผลบวกของ 123 และ 456"
+        คืนค่า (num1, operator, num2) หรือ None ถ้าไม่พบ
+        """
+        text_lower = text.lower()
+        
+        # Pattern: หาผล[บวก/ลบ/คูณ/หาร] ของ <number1> และ <number2>
+        # หรือ: ผล[บวก/ลบ/คูณ/หาร] ของ <number1> กับ <number2>
+        thai_calc_patterns = [
+            # รูปแบบ: หาผลXXX ของ N1 และ N2 (รวม "ผลต่าง" ด้วย)
+            r"(?:หา)?ผล(บวก|ลบ|ต่าง|คูณ|หาร)\s*ของ\s*(\d+\.?\d*)\s*(?:และ|กับ|,)\s*(\d+\.?\d*)",
+            # รูปแบบ: XXX N1 ด้วย N2
+            r"(?:หา)?(บวก|ลบ|คูณ|หาร)\s*(\d+\.?\d*)\s*(?:ด้วย|และ|กับ|,)\s*(\d+\.?\d*)",
+            # รูปแบบ: N1 XXX N2 (เช่น "123 บวก 456")
+            r"(\d+\.?\d*)\s*(?:หา)?(บวก|ลบ|คูณ|หาร)\s*(\d+\.?\d*)",
+        ]
+        
+        for pattern in thai_calc_patterns:
+            match = re.search(pattern, text_lower)
+            if match:
+                groups = match.groups()
+                
+                # กรณี pattern 1: (operation, num1, num2) - operation เป็น "บวก", "ลบ", "ต่าง", "คูณ", "หาร"
+                if len(groups) == 3 and groups[0] in self.thai_math_ops:
+                    op = self.thai_math_ops[groups[0]]
+                    num1 = float(groups[1])
+                    num2 = float(groups[2])
+                    return (num1, op, num2)
+                
+                # กรณี pattern 2: (operation, num1, num2) - operation เป็นคำกริยา
+                elif len(groups) == 3 and groups[0] in self.thai_math_ops:
+                    op = self.thai_math_ops[groups[0]]
+                    num1 = float(groups[1])
+                    num2 = float(groups[2])
+                    return (num1, op, num2)
+                
+                # กรณี pattern 3: (num1, operation, num2)
+                elif len(groups) == 3 and groups[1] in self.thai_math_ops:
+                    num1 = float(groups[0])
+                    op = self.thai_math_ops[groups[1]]
+                    num2 = float(groups[2])
+                    return (num1, op, num2)
+        
+        return None
+
+    def _check_logic_equation(self, text: str) -> bool:
+        """
+        ตรวจสอบว่าเป็นสมการหรือโจทย์ตรรกะที่ควรใช้ AdvancedLogicEngine หรือไม่
+        Pattern: "แก้สมการ...", "หาค่า x", "...มากกว่า...อยู่...", "A+B=..., A มากกว่า B"
+        """
+        text_lower = text.lower()
+        
+        # Pattern ที่บ่งชี้ว่าเป็นสมการ/ตรรกะ
+        logic_patterns = [
+            r'แก้สมการ',                    # แก้สมการ x + 5 = 10
+            r'หาค่า\s*[x-y]',              # หาค่า x, หาค่า y
+            r'\d*\s*[x-y]\s*[+\-*/]=\s*\d+', # x+5=10, 2x-3=7
+            r'มากกว่า.*อยู่',               # A มากกว่า B อยู่ 5
+            r'น้อยกว่า.*อยู่',               # A น้อยกว่า B อยู่ 3
+            r'.*มากกว่า.*และ.*รวม.*',       # A มากกว่า B และ A รวม B เท่ากับ...
+            r'.*มากกว่า.*และ.*บวก.*',       # โจทย์ตรรกะที่มีทั้ง "มากกว่า" และ "บวก"
+        ]
+        
+        return any(re.search(p, text_lower) for p in logic_patterns)
 
 def display_analysis(intent: ParsedIntent):
     """แสดงผลการวิเคราะห์แบบละเอียด"""
