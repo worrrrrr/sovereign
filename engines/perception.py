@@ -367,6 +367,10 @@ class PerceptionEngine:
             # Entertainment
             IntentType.TELL_JOKE: 'entertainment_joke',
             
+            # Finance & Payment
+            IntentType.PAYMENT_QUERY: 'finance_payment_query',
+            IntentType.MONEY_CALCULATION: 'finance_money_calc',
+
             # Unknown
             IntentType.UNKNOWN: 'unknown',
         }

@@ -55,6 +55,10 @@ class IntentType(Enum):
     # Entertainment
     TELL_JOKE = "tell_joke"              # เล่ามุกตลก
     
+    # Finance & Payment
+    PAYMENT_QUERY = "payment_query"      # ถามเกี่ยวกับการชำระเงิน
+    MONEY_CALCULATION = "money_calculation"  # คำนวณเงิน ทอนเงิน
+    
     UNKNOWN = "unknown"
 
 # ------------------------------------------------------------
@@ -153,7 +157,7 @@ class IntentParser:
             IntentType.FAREWELL: [r'(บาย|ลาก่อน|ไปละ|เจอกัน|goodbye|bye|have a nice day|bon voyage|แล้วเจอกัน)'],
             IntentType.THANK: [r'(ขอบคุณ|ขอบใจ|thanks|thank you|ซึ้งใจ|พระคุณ)'],
             IntentType.APOLOGIZE: [r'(ขอโทษ|sorry|โทษที|ผิดไปแล้ว|อภัย)'],
-            IntentType.LAUGH: [r'(55+|ฮ่า+|ขำ|haha|lol|อิอิ|555+)'],
+            IntentType.LAUGH: [r'^(55+|ฮ่า+|ขำ|haha|lol|อิอิ|555+|ฮ่าๆ+)$'],  # ต้องเป็นคำล้วนๆ ไม่ผสมคำอื่น
             IntentType.ACKNOWLEDGE: [r'^(อือ|อืม|ครับ|ค่ะ|ได้|ok|yes|ใช่|เข้าใจ|รับทราบ)$'],
             IntentType.REJECT: [r'^(ไม่|ไม่ได้|ไม่เอา|ไม่ครับ|ไม่ค่ะ|ไม่อยาก|ปฏิเสธ)$'],
         }
@@ -178,6 +182,9 @@ class IntentParser:
             IntentType.SARCASM_PASSIVE: ['ก็เก่งนี่นา', 'ดีมากเลยนะ', 'ฉลาดจัง', 'ทำได้ดีมาก', 'เยี่ยมไปเลย', 'สุดยอด', 'เก่งมาก', 'น่ารักจัง'],
             # Entertainment
             IntentType.TELL_JOKE: ['เล่ามุก', 'เรื่องตลก', ' joke', 'ตลก', 'ฮา', 'ขำขัน', 'เล่าเรื่องตลก', 'เล่าเรื่องฮา', 'ทำให้ขำ', 'make me laugh', 'tell me a joke'],
+            # Finance & Payment
+            IntentType.PAYMENT_QUERY: ['ชำระเงิน', 'จ่ายบิล', 'โอนเงิน', 'จ่าย', 'เงินทอน', 'ทอนเงิน', 'ทอน', 'ชำระ', 'invoice', 'payment', 'bill'],
+            IntentType.MONEY_CALCULATION: ['คำนวณเงิน', 'คิดเงิน', 'รวมเงิน', 'ยอดรวม', 'ยอดเงิน', 'กี่บาท', 'เท่าไหร่', 'ราคาเท่าไหร่', 'มูลค่า'],
         }
         
         # คำถาม patterns
@@ -303,8 +310,12 @@ class IntentParser:
             return IntentType.EXPRESS_OPINION
         
         # การขอความช่วยเหลือ (REQUEST_HELP) - ต้องมีคำขอร้อง
-        if any(kw in text_lower for kw in ['ช่วย', 'ขอร้อง', 'กรุณา', 'ให้หน่อย', 'โปรด']):
-            return IntentType.REQUEST_HELP
+        # แต่ต้องตรวจสอบว่าเป็นคำสั่งการเงินก่อน (เช่น "คิดเงินให้หน่อย" ควรเป็น MONEY_CALCULATION)
+        help_keywords = ['ช่วย', 'ขอร้อง', 'กรุณา', 'ให้หน่อย', 'โปรด']
+        if any(kw in text_lower for kw in help_keywords):
+            # ตรวจสอบว่าไม่ใช่ money calculation ที่มี "ให้หน่อย"
+            if not any(money_kw in text_lower for money_kw in ['คิดเงิน', 'รวมเงิน', 'คำนวณเงิน']):
+                return IntentType.REQUEST_HELP
         
         # การเตือน/ห้าม (WARN) - ต้องขึ้นต้นหรือมีคำห้ามชัดเจน
         if any(text_lower.startswith(kw) for kw in ['ห้าม', 'อย่า', 'ระวัง']):
@@ -374,6 +385,25 @@ class IntentParser:
         # มุกตลก/เรื่องฮา (TELL_JOKE) - ตรวจสอบก่อน ASK_INFO
         if any(kw in text_lower for kw in ['เล่ามุก', 'เรื่องตลก', 'ตลก', 'ฮา', 'ขำขัน', 'เล่าเรื่องตลก', 'เล่าเรื่องฮา', 'ทำให้ขำ', 'make me laugh', 'tell me a joke']):
             return IntentType.TELL_JOKE
+        
+        # การชำระเงิน/เงินทอง (PAYMENT_QUERY, MONEY_CALCULATION) - ตรวจสอบก่อน ASK_INFO และ COMMAND
+        # เพิ่ม keywords ให้ครอบคลุมมากขึ้น
+        payment_keywords = [
+            'ทอน', 'เงินทอน', 'ทอนเงิน', 'ทอนอีก', 'ทอนให้', 
+            'ชำระ', 'จ่ายบิล', 'โอนเงิน', 'โอนให้', 'invoice', 'payment', 'bill',
+            'จ่ายเงิน', 'รับเงิน', 'เก็บเงิน', 'เรียกเก็บ', 'หักเงิน', 'เติมเงิน',
+            'เตรียมเงิน', 'สินค้าราคา', 'ราคาเท่าไหร่', 'ค่าสินค้า'
+        ]
+        if any(kw in text_lower for kw in payment_keywords):
+            return IntentType.PAYMENT_QUERY
+        
+        money_calc_keywords = [
+            'รวมเงิน', 'คิดเงิน', 'ยอดรวม', 'ทั้งหมด', 'รวมเป็น', 'คำนวณเงิน',
+            'รวมเท่าไหร่', 'คิดให้หน่อย', 'รวมทั้งหมด', 'มูลค่า', 'กี่บาท',
+            'เท่าไหร่', 'ราคาเท่าไหร่', 'คิดเงินให้', 'รวมให้หน่อย'
+        ]
+        if any(kw in text_lower for kw in money_calc_keywords):
+            return IntentType.MONEY_CALCULATION
         
         # คำถามทั่วไป (ASK_INFO) - ตรวจสอบสุดท้ายเพื่อไม่ให้ overlap
         question_indicators = ['?', 'อะไร', 'อย่างไร', 'ยังไง', 'ไหม', 'หรือ', 'เท่าไหร่', 'ไหน', 'ใคร', 'เมื่อไหร่', 'ทำไม']
@@ -564,6 +594,52 @@ class IntentParser:
                 params={"query": user_input},
                 context="web_search",
                 confidence=0.90,
+                reasoning="\n".join(reasoning_steps)
+            )
+
+        # =====================================================
+        # ขั้นตอนที่ 4: ตรวจสอบการชำระเงินและคำนวณเงิน
+        # =====================================================
+        # ตรวจสอบ payment/query ก่อน (เช่น "ทอนอีก 2 บาท", "เงินทอนเท่าไหร่")
+        payment_patterns = [
+            r'ทอน.*?(\d+).*?บาท',              # ทอนอีก 2 บาท
+            r'เงินทอน.*?(?:เท่าไหร่|กี่บาท)',    # เงินทอนเท่าไหร่
+            r'(?:จ่าย|ชำระ).*?(\d+).*?บาท',     # จ่าย 500 บาท
+            r'โอนเงิน.*?(\d+).*?บาท',          # โอนเงิน 1000 บาท
+            r'payment.*?(\d+)',                # payment 100
+            r'bill.*?(\d+)',                   # bill 500
+        ]
+        
+        for pattern in payment_patterns:
+            match = re.search(pattern, user_input, re.IGNORECASE)
+            if match:
+                reasoning_steps.append("ตรวจพบคำขอเกี่ยวกับการชำระเงิน")
+                amount = int(match.group(1)) if match.lastindex else 0
+                return ParsedIntent(
+                    intent_type=IntentType.PAYMENT_QUERY,
+                    original_input=user_input,
+                    action="payment_query",
+                    entities=[amount],
+                    params={"amount": amount, "currency": "THB", "query_type": "payment"},
+                    context="finance_payment",
+                    confidence=0.92,
+                    reasoning="\n".join(reasoning_steps)
+                )
+        
+        # ตรวจสอบ money calculation (เช่น "รวมเงินเท่าไหร่", "คิดเงินให้หน่อย")
+        money_calc_keywords = ['รวมเงิน', 'คิดเงิน', 'ยอดรวม', 'ทั้งหมด', 'รวมเป็น', '合计']
+        if any(kw in user_input for kw in money_calc_keywords):
+            # พยายามดึงตัวเลขจากข้อความ
+            amounts = re.findall(r'(\d+(?:\.\d+)?)\s*(?:บาท|baht|THB)?', user_input, re.IGNORECASE)
+            reasoning_steps.append("ตรวจพบคำขอคำนวณเงิน")
+            return ParsedIntent(
+                intent_type=IntentType.MONEY_CALCULATION,
+                original_input=user_input,
+                action="calculate_money",
+                entities=[float(a) for a in amounts] if amounts else [],
+                params={"amounts": [float(a) for a in amounts], "currency": "THB"},
+                context="finance_calculation",
+                confidence=0.88,
                 reasoning="\n".join(reasoning_steps)
             )
 

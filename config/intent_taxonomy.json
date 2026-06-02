@@ -96,12 +96,21 @@
         "coins",
         "banknote",
         "prepare money",
-        "exact change"
+        "exact change",
+        "จ่ายเงิน",
+        "ทอนเงิน",
+        "เตรียมเงิน",
+        "เหรียญ",
+        "แบงค์",
+        "เงินทอน"
       ],
       "examples": [
         "how to pay 19 baht",
         "what coins for 50 baht",
-        "prepare exact change"
+        "prepare exact change",
+        "จะจ่ายเงิน 500 บาท ควรเตรียมเงินยังไง",
+        "มีเงิน 1000 บาท จะทอนยังไง",
+        "เตรียมเงินจ่าย 350 บาท"
       ]
     },
     {

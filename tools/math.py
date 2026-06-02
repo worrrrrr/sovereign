@@ -9,7 +9,7 @@ from decimal import Decimal, ROUND_HALF_UP
 import re
 
 
-def add(a: float, b: float) -> float:
+def add(a: float, b: float) -> Dict[str, Any]:
     """
     Add two numbers.
     
@@ -18,9 +18,16 @@ def add(a: float, b: float) -> float:
         b: Second number
     
     Returns:
-        Sum of a and b
+        Dictionary with result and expression
     """
-    return a + b
+    result = a + b
+    return {
+        'operation': 'add',
+        'input_a': a,
+        'input_b': b,
+        'result': result,
+        'expression': f"{a} + {b} = {result}"
+    }
 
 
 def subtract(a: float, b: float, verbose: bool = False) -> Dict[str, Any]:
@@ -49,6 +56,7 @@ def subtract(a: float, b: float, verbose: bool = False) -> Dict[str, Any]:
             'input_a': a,
             'input_b': b,
             'result': result_float,
+            'expression': f"{a} - {b} = {result_float}",
             'steps': [
                 f"จัดหลักทศนิยม: {a} และ {b}",
                 f"คำนวณ: {a} - {b}",
@@ -60,11 +68,12 @@ def subtract(a: float, b: float, verbose: bool = False) -> Dict[str, Any]:
         'operation': 'subtract',
         'input_a': a,
         'input_b': b,
-        'result': result_float
+        'result': result_float,
+        'expression': f"{a} - {b} = {result_float}"
     }
 
 
-def multiply(a: float, b: float) -> float:
+def multiply(a: float, b: float) -> Dict[str, Any]:
     """
     Multiply two numbers.
     
@@ -73,12 +82,19 @@ def multiply(a: float, b: float) -> float:
         b: Second number
     
     Returns:
-        Product of a and b
+        Dictionary with result and expression
     """
-    return a * b
+    result = a * b
+    return {
+        'operation': 'multiply',
+        'input_a': a,
+        'input_b': b,
+        'result': result,
+        'expression': f"{a} * {b} = {result}"
+    }
 
 
-def divide(a: float, b: float) -> float:
+def divide(a: float, b: float) -> Dict[str, Any]:
     """
     Divide a by b.
     
@@ -87,14 +103,21 @@ def divide(a: float, b: float) -> float:
         b: Divisor
     
     Returns:
-        Quotient (a / b)
+        Dictionary with result and expression
     
     Raises:
         ZeroDivisionError: If b is zero
     """
     if b == 0:
         raise ZeroDivisionError("Cannot divide by zero")
-    return a / b
+    result = a / b
+    return {
+        'operation': 'divide',
+        'input_a': a,
+        'input_b': b,
+        'result': result,
+        'expression': f"{a} / {b} = {result}"
+    }
 
 
 def solve_diophantine_z3(equation_str: str) -> Dict[str, Any]:

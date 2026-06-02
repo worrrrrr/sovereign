@@ -205,6 +205,71 @@ class PlannerEngine:
                 metadata={'response_type': 'greeting'}
             )
         
+        # Handle entertainment/joke requests
+        if task.task_type == 'entertainment':
+            return ExecutionPlan(
+                is_valid=True,
+                steps=[
+                    PlanStep(
+                        tool_name='tell_joke',
+                        action='tell_joke',
+                        parameters={},
+                        description="Tell a random joke"
+                    )
+                ],
+                task_type=task.task_type,
+                intent_id=task.intent_id,
+                metadata={'response_type': 'entertainment'}
+            )
+        
+        # Handle advice/warning requests
+        if task.task_type == 'advice_handling':
+            advice_text = params.get('raw_text', params.get('original_input', ''))
+            return ExecutionPlan(
+                is_valid=True,
+                steps=[],
+                task_type=task.task_type,
+                intent_id=task.intent_id,
+                metadata={
+                    'response_type': 'advice',
+                    'intent_type': params.get('intent_type'),
+                    'advice_context': advice_text
+                }
+            )
+        
+        # Handle financial/payment advice
+        if task.task_type == 'financial_advice':
+            amount = params.get('amount')
+            # Try to extract amount from different possible keys
+            if not amount:
+                nested_params = params.get('params', {})
+                amount = nested_params.get('amount')
+            if not amount:
+                amount = params.get('value', 0)
+            
+            if amount and amount > 0:
+                return ExecutionPlan(
+                    is_valid=True,
+                    steps=[
+                        PlanStep(
+                            tool_name='suggest_payment',
+                            action='suggest_payment',
+                            parameters={'amount': float(amount), 'currency': 'THB'},
+                            description=f"Suggest payment method for {amount} THB"
+                        )
+                    ],
+                    task_type=task.task_type,
+                    intent_id=task.intent_id,
+                    metadata={'response_type': 'financial_advice', 'amount': amount}
+                )
+            else:
+                return ExecutionPlan(
+                    is_valid=False,
+                    error_message="No amount specified for payment advice",
+                    task_type=task.task_type,
+                    intent_id=task.intent_id
+                )
+        
         # Handle social/emotional responses (no tool needed, just response generation)
         if task.task_type == 'social_response':
             return ExecutionPlan(
